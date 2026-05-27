@@ -47,6 +47,6 @@ the matching build. On load it queries the GitHub Releases API
 buttons to the real asset URLs and shows the version + file sizes. Until a
 release is tagged it gracefully links to the Releases page.
 
-> Note: the product repo's `build.yml` currently uploads CI **artifacts** only.
-> Publish a tagged **Release** (with the Tauri bundles attached) for the
-> per-platform direct-download buttons to light up.
+> The buttons read the **latest** release each load, so publishing a new tagged
+> release (with the platform bundles attached) updates the version, links and
+> file sizes automatically — nothing in this repo is pinned to a version.
