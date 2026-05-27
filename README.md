@@ -43,7 +43,7 @@ assets/
 
 `assets/js/product.js` detects the visitor's OS and points the primary button at
 the matching build. On load it queries the GitHub Releases API
-(`jehuamanna/typing-mastery`); when a published release exists it wires the
+(`Nodex-Studio/typing-mastery`); when a published release exists it wires the
 buttons to the real asset URLs and shows the version + file sizes. Until a
 release is tagged it gracefully links to the Releases page.
 

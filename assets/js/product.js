@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const REPO = "jehuamanna/typing-mastery";
+  const REPO = "Nodex-Studio/typing-mastery";
   const RELEASES = `https://github.com/${REPO}/releases`;
   const LATEST = `${RELEASES}/latest`;
   const API = `https://api.github.com/repos/${REPO}/releases/latest`;
