@@ -1,0 +1,91 @@
+/* =========================================================================
+   Nodex Studio — home page
+   ========================================================================= */
+
+/* ---- hero ------------------------------------------------------------- */
+.hero { position: relative; padding-block: clamp(70px, 12vw, 150px) clamp(50px, 8vw, 96px); }
+.hero-grid {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 78%);
+          mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 78%);
+  opacity: .5;
+}
+.hero h1 { margin-top: 1.6rem; max-width: 16ch; }
+.hero h1 .ink { color: var(--text); }
+.hero .lead { margin-top: 1.7rem; }
+.hero-cta { margin-top: 2.4rem; display: flex; flex-wrap: wrap; gap: .9rem; align-items: center; }
+.hero-meta {
+  margin-top: 3.2rem; display: flex; flex-wrap: wrap; gap: 1.6rem 2.6rem;
+  font-family: var(--font-mono); font-size: .78rem; color: var(--text-dim); letter-spacing: .02em;
+}
+.hero-meta span { display: inline-flex; align-items: center; gap: .55em; }
+.hero-meta .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; box-shadow: 0 0 12px var(--accent); }
+
+/* ---- products --------------------------------------------------------- */
+.sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; flex-wrap: wrap; margin-bottom: clamp(34px, 5vw, 60px); }
+.sec-head p { color: var(--text-dim); max-width: 40ch; margin-top: .8rem; }
+.sec-count { font-family: var(--font-mono); font-size: .78rem; color: var(--text-faint); letter-spacing: .04em; white-space: nowrap; }
+
+.product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(18px, 2.2vw, 28px); }
+
+.pcard {
+  position: relative; display: flex; flex-direction: column;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden; transition: transform .4s var(--ease), border-color .3s, box-shadow .4s var(--ease);
+}
+.pcard--feature { grid-column: 1 / -1; flex-direction: row; }
+.pcard--link:hover { transform: translateY(-4px); border-color: var(--line-strong); box-shadow: var(--shadow); }
+
+.pcard-media { position: relative; overflow: hidden; background: var(--panel-2); flex: 1 1 56%; min-height: 0; }
+.pcard--feature .pcard-media { border-right: 1px solid var(--line); }
+.pcard-media img { width: 100%; height: 100%; object-fit: cover; object-position: top left;
+  transition: transform .6s var(--ease), filter .4s; }
+.pcard--link:hover .pcard-media img { transform: scale(1.03); }
+.pcard-media .shot-light, .pcard-media .shot-dark { position: absolute; inset: 0; }
+
+.pcard-body { flex: 1 1 44%; padding: clamp(24px, 3vw, 40px); display: flex; flex-direction: column; gap: 1rem; }
+.pcard-kicker { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--text-faint); }
+.pcard-body h3 { font-size: clamp(1.5rem, 2.6vw, 2.1rem); }
+.pcard-body p { color: var(--text-dim); }
+.pcard-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .2rem; }
+.tag {
+  font-family: var(--font-mono); font-size: .68rem; letter-spacing: .04em;
+  padding: .35em .7em; border-radius: 100px; border: 1px solid var(--line);
+  color: var(--text-dim); background: var(--panel-2);
+}
+.pcard-go { margin-top: auto; display: inline-flex; align-items: center; gap: .5em;
+  font-family: var(--font-mono); font-size: .82rem; color: var(--accent); letter-spacing: .03em; }
+.pcard-go svg { width: 1.05em; height: 1.05em; transition: transform .3s var(--ease); }
+.pcard--link:hover .pcard-go svg { transform: translateX(5px); }
+
+/* "soon" ghost cards */
+.pcard--soon { border-style: dashed; background: transparent; min-height: 230px; }
+.pcard--soon .pcard-body { justify-content: center; gap: .6rem; }
+.pcard--soon h3 { color: var(--text-faint); font-style: italic; }
+.pcard--soon p { font-size: .92rem; }
+.soon-badge { align-self: flex-start; }
+
+/* ---- ethos ------------------------------------------------------------ */
+.ethos { border-block: 1px solid var(--line); background: color-mix(in oklab, var(--panel) 55%, transparent); }
+.ethos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 4vw, 56px); }
+.ethos-item .n { font-family: var(--font-mono); font-size: .76rem; color: var(--accent); letter-spacing: .1em; }
+.ethos-item h3 { margin: .7rem 0 .6rem; }
+.ethos-item p { color: var(--text-dim); font-size: 1rem; }
+
+/* ---- closing cta ------------------------------------------------------ */
+.cta-band { text-align: center; }
+.cta-band h2 { max-width: 18ch; margin: 0 auto 1.4rem; }
+.cta-band .lead { margin: 0 auto 2rem; }
+
+@media (max-width: 860px) {
+  .pcard--feature { flex-direction: column; }
+  .pcard--feature .pcard-media { border-right: 0; border-bottom: 1px solid var(--line); min-height: 240px; flex-basis: auto; }
+  .ethos-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .product-grid { grid-template-columns: 1fr; }
+}

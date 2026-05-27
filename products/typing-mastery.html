@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Typing Mastery — adaptive touch-typing trainer for typists who already type</title>
+  <meta name="description" content="Typing Mastery is a minimalist, offline-first touch-typing trainer: Monkeytype-style tests, keybr-style adaptive drills, a Code Lab that types your real source files, per-key analysis, and 13 themes. Free & open source for macOS, Windows and Linux.">
+  <link rel="icon" href="../assets/img/brand/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="Typing Mastery — climb toward 180 WPM, deliberately">
+  <meta property="og:description" content="A keyboard-first typing trainer with adaptive drills, a real-code lab, and deep analysis. Offline, open source, 13 themes.">
+  <meta property="og:type" content="website">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..600&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/product.css">
+</head>
+<body class="product">
+
+  <!-- ===================== header ===================== -->
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="../index.html" aria-label="Nodex Studio home">
+        <svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="20" cy="44" r="5" fill="currentColor"/><circle cx="44" cy="20" r="5" fill="currentColor"/><rect x="22" y="38" width="28" height="4" rx="2" transform="rotate(-45 22 38)" fill="currentColor"/></svg>
+        <b>nodex<span>/studio</span></b>
+      </a>
+      <nav class="nav">
+        <a href="../index.html#products">Products</a>
+        <a href="typing-mastery.html" class="active">Typing&nbsp;Mastery</a>
+        <a href="#features">Features</a>
+        <a href="#download">Download</a>
+        <a href="https://github.com/jehuamanna/typing-mastery" target="_blank" rel="noopener">GitHub&nbsp;↗</a>
+        <button class="theme-toggle" data-theme-toggle aria-label="Toggle colour theme">
+          <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+          <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== hero ===================== -->
+    <section class="phero">
+      <div class="wrap phero-top">
+        <div>
+          <p class="phero-wordmark reveal">typing<b>mastery</b> · a Nodex Studio tool</p>
+          <h1 class="reveal" data-delay="1">Already fast? <span class="accent serif-i">Get faster.</span></h1>
+          <p class="lead reveal" data-delay="2">A minimalist, offline-first trainer for typists who already touch-type — fusing a Monkeytype-style test with keybr-style adaptive learning, so you climb from comfortable toward 180–200&nbsp;WPM through deliberate, data-driven practice.</p>
+
+          <div class="phero-keys reveal" data-delay="3">
+            <span><span class="kbd">enter</span> repeat</span>
+            <span><span class="kbd">ctrl</span>+<span class="kbd">enter</span> fresh test</span>
+            <span><span class="kbd">tab</span> restart</span>
+          </div>
+
+          <div class="dl reveal" id="download-top" data-delay="3">
+            <div class="dl-primary">
+              <a class="btn" data-dl-primary href="https://github.com/jehuamanna/typing-mastery/releases/latest">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span data-dl-label>Download</span>
+              </a>
+              <a class="btn btn--ghost" href="https://github.com/jehuamanna/typing-mastery" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03a9.5 9.5 0 0 1 5 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+                Source
+              </a>
+            </div>
+            <p class="dl-note" data-dl-note>Builds are published to <b>GitHub Releases</b> — open-source, no account needed.</p>
+            <div class="dl-others" data-dl-others></div>
+          </div>
+        </div>
+
+        <!-- screencast demo -->
+        <div class="reveal" data-delay="2">
+          <div class="demo-frame">
+            <div class="demo-chrome"><i></i><i></i><i></i><span>typing&nbsp;mastery</span></div>
+            <video autoplay muted loop playsinline preload="metadata" aria-label="Typing Mastery screen recording">
+              <source src="../assets/video/screencast.webm" type="video/webm">
+            </video>
+            <button class="demo-expand" data-demo-expand aria-label="Play with sound, fullscreen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4" stroke-linecap="round"/></svg>
+              expand
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== stat strip ===================== -->
+    <section class="stat-strip">
+      <div class="wrap">
+        <div class="stat reveal"><div class="v">13</div><div class="k">Themes</div></div>
+        <div class="stat reveal" data-delay="1"><div class="v">25</div><div class="k">Code languages</div></div>
+        <div class="stat reveal" data-delay="2"><div class="v">0</div><div class="k">Trackers</div></div>
+        <div class="stat reveal" data-delay="3"><div class="v">100%</div><div class="k">Offline</div></div>
+      </div>
+    </section>
+
+    <!-- ===================== features ===================== -->
+    <section class="section" id="features" style="padding-block:clamp(40px,6vw,80px)">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div>
+            <span class="eyebrow">Inside the app</span>
+            <h2 style="margin-top:1rem; max-width:16ch">Eight surfaces, one obsession: getting you faster.</h2>
+          </div>
+          <span class="sec-count">screens shown in your current theme</span>
+        </div>
+
+        <!-- 1 · test -->
+        <div class="feature reveal">
+          <div class="feature-text">
+            <div class="n">01 · Test</div>
+            <h2>Type the way you read.</h2>
+            <p>A clean, distraction-free test surface with a smooth, measured caret and per-character colouring. Pick what you type and how much of it.</p>
+            <ul class="feature-list">
+              <li>Modes: time, words, quote, code, custom &amp; adaptive train</li>
+              <li>Quote lengths from short to <em>thicc</em>; favourites too</li>
+              <li>Auto line-windowing keeps your eyes in one place</li>
+              <li><span class="kbd">alt</span>+<span class="kbd">enter</span> restart · <span class="kbd">ctrl</span>+<span class="kbd">enter</span> fresh text</li>
+            </ul>
+          </div>
+          <figure class="shot" data-cap="Typing test">
+            <img class="shot-dark" src="../assets/img/shots/test-dark.png" alt="Typing test — dark theme" loading="lazy" decoding="async">
+            <img class="shot-light" src="../assets/img/shots/test-light.png" alt="Typing test — light theme" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <!-- 2 · practice -->
+        <div class="feature flip reveal">
+          <div class="feature-text">
+            <div class="n">02 · Practice</div>
+            <h2>Drill the keys, not your patience.</h2>
+            <p>Structured lessons walk the board from the home row outward, with a live keyboard that highlights the very next key you need to hit.</p>
+            <ul class="feature-list">
+              <li>Lessons from home keys → reaches → full rows</li>
+              <li>Live keyboard with next-key highlighting</li>
+              <li>Problem-key panel ranks your weakest characters</li>
+              <li>Set WPM &amp; accuracy goals; toggle characters or words</li>
+            </ul>
+          </div>
+          <figure class="shot" data-cap="Practice">
+            <img class="shot-dark" src="../assets/img/shots/practice-dark.png" alt="Guided practice — dark theme" loading="lazy" decoding="async">
+            <img class="shot-light" src="../assets/img/shots/practice-light.png" alt="Guided practice — light theme" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <!-- 3 · code lab browse -->
+        <div class="feature reveal">
+          <div class="feature-text">
+            <div class="n">03 · Code Lab · Browse</div>
+            <h2>Type your own codebase.</h2>
+            <p>Add any folder as a project and type the real source files inside it. The browser reads straight from disk and watches for changes as you work.</p>
+            <ul class="feature-list">
+              <li>Live recursive folder tree, updated as files change</li>
+              <li>Junk &amp; binaries hidden automatically</li>
+              <li>Per-file line / word / character counts</li>
+              <li>Folder paths persist; <em>no file contents are ever stored</em></li>
+            </ul>
+          </div>
+          <figure class="shot" data-cap="Code Lab — file explorer">
+            <img class="shot-dark" src="../assets/img/shots/codelab-explorer-dark.png" alt="Code Lab file explorer — dark theme" loading="lazy" decoding="async">
+            <img class="shot-light" src="../assets/img/shots/codelab-explorer-light.png" alt="Code Lab file explorer — light theme" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <!-- 4 · code lab type -->
+        <div class="feature flip reveal">
+          <div class="feature-text">
+            <div class="n">04 · Code Lab · Type</div>
+            <h2>Real files, real indentation.</h2>
+            <p>A large code pane handles whitespace the way an editor would, so the muscle memory you build is the muscle memory you actually use.</p>
+            <ul class="feature-list">
+              <li>Banners, licenses &amp; ASCII-art stripped before you type</li>
+              <li>Auto-indent and <span class="kbd">tab</span> to indent</li>
+              <li>Long files auto-pause after a 3s idle gap (excluded from WPM)</li>
+              <li><span class="kbd">ctrl</span>+<span class="kbd">enter</span> reloads the file</li>
+            </ul>
+          </div>
+          <figure class="shot" data-cap="Code Lab — typing">
+            <img class="shot-dark" src="../assets/img/shots/codelab-type-dark.png" alt="Code Lab typing — dark theme" loading="lazy" decoding="async">
+            <img class="shot-light" src="../assets/img/shots/codelab-type-light.png" alt="Code Lab typing — light theme" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <!-- 5 · analysis -->
+        <div class="feature reveal">
+          <div class="feature-text">
+            <div class="n">05 · Analysis</div>
+            <h2>Find the keys holding you back.</h2>
+            <p>Every keystroke updates per-character accuracy and latency. The analysis screen turns that into a map of exactly where to aim your next session.</p>
+            <ul class="feature-list">
+              <li>Keyboard accuracy heatmap across the whole board</li>
+              <li>Weakest keys ranked by accuracy <em>and</em> reaction time</li>
+              <li>Click keys to assemble a focused drill set</li>
+              <li>WPM trend over your last 60 tests, plus coaching tips</li>
+            </ul>
+          </div>
+          <figure class="shot" data-cap="Key analysis">
+            <img class="shot-dark" src="../assets/img/shots/analysis-dark.png" alt="Key analysis heatmap — dark theme" loading="lazy" decoding="async">
+            <img class="shot-light" src="../assets/img/shots/analysis-light.png" alt="Key analysis heatmap — light theme" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <!-- 6 · history -->
+        <div class="feature flip reveal">
+          <div class="feature-text">
+            <div class="n">06 · History</div>
+            <h2>Every run, on the record.</h2>
+            <p>A complete, local log of every test you've taken — searchable at a glance and visualised as one continuous speed curve.</p>
+            <ul class="feature-list">
+              <li>Full WPM trend with hover tooltips per test</li>
+              <li>Tests · avg WPM · best WPM · avg accuracy · time typing</li>
+              <li>Per-test source, speed, accuracy, errors &amp; duration</li>
+              <li>Stored in IndexedDB on your machine; clear it anytime</li>
+            </ul>
+          </div>
+          <figure class="shot" data-cap="History">
+            <img class="shot-dark" src="../assets/img/shots/history-dark.png" alt="Test history — dark theme" loading="lazy" decoding="async">
+            <img class="shot-light" src="../assets/img/shots/history-light.png" alt="Test history — light theme" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <!-- 7 · progress -->
+        <div class="feature reveal">
+          <div class="feature-text">
+            <div class="n">07 · Progress</div>
+            <h2>Watch the streak grow.</h2>
+            <p>A bird's-eye view of your practice habit — the calendar that turns "I should practise" into "I practised today."</p>
+            <ul class="feature-list">
+              <li>GitHub-style activity calendar for the last year</li>
+              <li>Days active, current &amp; longest streak, lifetime totals</li>
+              <li>Month calendar with per-day best WPM</li>
+              <li>Busiest day, most-typed source &amp; per-session log</li>
+            </ul>
+          </div>
+          <figure class="shot" data-cap="Progress">
+            <img class="shot-dark" src="../assets/img/shots/progress-dark.png" alt="Progress calendar — dark theme" loading="lazy" decoding="async">
+            <img class="shot-light" src="../assets/img/shots/progress-light.png" alt="Progress calendar — light theme" loading="lazy" decoding="async">
+          </figure>
+        </div>
+
+        <!-- 8 · feedback / results -->
+        <div class="feature flip reveal">
+          <div class="feature-text">
+            <div class="n">08 · Feedback</div>
+            <h2>A replay of every keystroke.</h2>
+            <p>Finish a test and get the full picture — a Monkeytype-grade results graph plus a timeline replay you can scrub at up to 4×.</p>
+            <ul class="feature-list">
+              <li>WPM / raw / error timeline rendered with ECharts</li>
+              <li>Consistency, character breakdown &amp; personal-best marker</li>
+              <li>Timeline replay at 0.5× – 4× speed</li>
+              <li>Repeat (<span class="kbd">enter</span>), go fresh (<span class="kbd">ctrl</span>+<span class="kbd">enter</span>), or jump to analysis</li>
+            </ul>
+          </div>
+          <figure class="shot" data-cap="Results &amp; timeline replay">
+            <img class="shot-dark" src="../assets/img/shots/results-dark.png" alt="Results and timeline replay — dark theme" loading="lazy" decoding="async">
+            <img class="shot-light" src="../assets/img/shots/results-light.png" alt="Results and timeline replay — light theme" loading="lazy" decoding="async">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== themes ===================== -->
+    <section class="section" id="themes" style="border-top:1px solid var(--line)">
+      <div class="wrap">
+        <div class="themes-head reveal">
+          <span class="eyebrow" style="justify-content:center">Make it yours</span>
+          <h2 style="margin-top:1rem">Thirteen themes, three layouts.</h2>
+          <p>Soft, Minimal, Editorial or Terminal layouts — each in a palette to match your desk. Your choice persists along with every preference and stat.</p>
+        </div>
+
+        <div class="theme-rail reveal" data-delay="1">
+          <!-- each card: swatch colour + screenshot of the settings panel in that theme -->
+          <div class="theme-card"><figure data-cap="aurora theme"><img src="../assets/img/shots/theme-aurora.png" alt="aurora theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#6d7bf5,#9b8cff)"></span>aurora <b>dark</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="ember theme"><img src="../assets/img/shots/theme-ember.png" alt="ember theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#ff7a4d,#ffb15c)"></span>ember <b>dark</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="parchment theme"><img src="../assets/img/shots/theme-parchment.png" alt="parchment theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#9a6a3a,#c79b5c)"></span>parchment <b>light</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="matrix theme"><img src="../assets/img/shots/theme-matrix.png" alt="matrix theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#2ecc40,#7dffb0)"></span>matrix <b>dark</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="carbon theme"><img src="../assets/img/shots/theme-carbon.png" alt="carbon theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#e6396b,#ff7a59)"></span>carbon <b>dark</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="light theme"><img src="../assets/img/shots/theme-light.png" alt="light theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#d62f5c,#ff7a59)"></span>light <b>light</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="mono theme"><img src="../assets/img/shots/theme-mono.png" alt="mono theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#9a9a9a,#cfcfcf)"></span>mono <b>dark</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="solaris theme"><img src="../assets/img/shots/theme-solaris.png" alt="solaris theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#d9531e,#ffae3b)"></span>solaris <b>dark</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="nord theme"><img src="../assets/img/shots/theme-nord.png" alt="nord theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#88c0d0,#b3d4e0)"></span>nord <b>dark</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="daylight theme"><img src="../assets/img/shots/theme-daylight.png" alt="daylight theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#2f6df6,#6aa3ff)"></span>daylight <b>light</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="meadow theme"><img src="../assets/img/shots/theme-meadow.png" alt="meadow theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#3aa657,#86d49a)"></span>meadow <b>light</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="lavender theme"><img src="../assets/img/shots/theme-lavender.png" alt="lavender theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#8b5cf6,#c4a3ff)"></span>lavender <b>light</b></figcaption></figure></div>
+          <div class="theme-card"><figure data-cap="mist theme"><img src="../assets/img/shots/theme-mist.png" alt="mist theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#2bb3a3,#7fd9cf)"></span>mist <b>light</b></figcaption></figure></div>
+        </div>
+        <p class="rail-hint">scroll the rail → · click any shot to enlarge</p>
+      </div>
+    </section>
+
+    <!-- ===================== download band ===================== -->
+    <section class="section dl-band" id="download">
+      <div class="wrap">
+        <span class="eyebrow reveal" style="justify-content:center">Get it</span>
+        <h2 class="reveal" data-delay="1" style="margin-top:1rem">Free, open source, on every desktop.</h2>
+        <p class="lead reveal" data-delay="2">Download a native build for your platform. No account, no telemetry, nothing phoning home.</p>
+        <div class="dl reveal" data-delay="3" style="margin-top:0">
+          <div class="dl-primary">
+            <a class="btn" data-dl-primary href="https://github.com/jehuamanna/typing-mastery/releases/latest">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span data-dl-label>Download</span>
+            </a>
+            <a class="btn btn--ghost" href="https://github.com/jehuamanna/typing-mastery/releases" target="_blank" rel="noopener">All releases ↗</a>
+          </div>
+          <p class="dl-note" data-dl-note>Builds are published to <b>GitHub Releases</b> — open-source, no account needed.</p>
+          <div class="dl-others" data-dl-others></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== footer ===================== -->
+  <footer class="site-foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-col foot-col--lede">
+          <a class="brand" href="../index.html">
+            <svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="20" cy="44" r="5" fill="currentColor"/><circle cx="44" cy="20" r="5" fill="currentColor"/><rect x="22" y="38" width="28" height="4" rx="2" transform="rotate(-45 22 38)" fill="currentColor"/></svg>
+            <b>nodex<span>/studio</span></b>
+          </a>
+          <p class="foot-lede">Typing Mastery is built by Nodex Studio — focused, offline-first software for people who live in the keyboard.</p>
+        </div>
+        <div class="foot-col">
+          <h4>Typing Mastery</h4>
+          <a href="#features">Features</a>
+          <a href="#themes">Themes</a>
+          <a href="#download">Download</a>
+        </div>
+        <div class="foot-col">
+          <h4>Open source</h4>
+          <a href="https://github.com/jehuamanna/typing-mastery" target="_blank" rel="noopener">Repository</a>
+          <a href="https://github.com/jehuamanna/typing-mastery/releases" target="_blank" rel="noopener">Releases</a>
+          <a href="../index.html">Nodex Studio</a>
+        </div>
+      </div>
+      <div class="foot-base">
+        <span>© <span data-year>2026</span> Nodex Studio · Typing Mastery is free &amp; open source.</span>
+        <span>best 77 wpm · and counting</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lightbox-close" data-lb-close aria-label="Close">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg>
+    </button>
+    <img alt="">
+    <div class="lightbox-cap"></div>
+  </div>
+
+  <script src="../assets/js/site.js"></script>
+  <script src="../assets/js/product.js"></script>
+</body>
+</html>
