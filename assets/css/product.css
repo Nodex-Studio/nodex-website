@@ -108,9 +108,32 @@ body.product:where([data-x]) { --accent: #d62f5c; }
 /* ---- themes gallery --------------------------------------------------- */
 .themes-head { text-align: center; max-width: 60ch; margin: 0 auto clamp(32px, 5vw, 56px); }
 .themes-head p { color: var(--text-dim); margin-top: 1rem; }
+.theme-carousel { position: relative; }
+.carousel-btn {
+  position: absolute; top: 42%; transform: translateY(-50%);
+  width: 48px; height: 48px; border-radius: 50%; z-index: 6;
+  display: grid; place-items: center;
+  background: color-mix(in oklab, var(--bg) 72%, transparent);
+  border: 1px solid var(--line-strong); color: var(--text);
+  backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: var(--shadow);
+  transition: background-color .2s, color .2s, border-color .2s, transform .2s var(--ease);
+}
+.carousel-btn:hover { background: var(--accent); color: #fff8f2; border-color: transparent; transform: translateY(-50%) scale(1.06); }
+.carousel-btn:active { transform: translateY(-50%) scale(.96); }
+.carousel-btn svg { width: 22px; height: 22px; }
+.carousel-prev { left: -16px; }
+.carousel-next { right: -16px; }
+@media (max-width: 760px) {
+  .carousel-btn { width: 40px; height: 40px; }
+  .carousel-prev { left: 4px; }
+  .carousel-next { right: 4px; }
+}
+
 .theme-rail {
   display: grid; grid-auto-flow: column; grid-auto-columns: minmax(280px, 360px);
   gap: 18px; overflow-x: auto; padding-bottom: 18px; scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   -ms-overflow-style: none; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent;
 }
 .theme-rail::-webkit-scrollbar { height: 8px; }

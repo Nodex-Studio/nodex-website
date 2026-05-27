@@ -113,11 +113,11 @@
           <div class="feature-text">
             <div class="n">01 · Test</div>
             <h2>Type the way you read.</h2>
-            <p>A clean, distraction-free test surface with a smooth, measured caret and per-character colouring. Pick what you type and how much of it.</p>
+            <p>A clean, distraction-free test surface with a smooth, measured caret and per-character colouring. Train on the material you actually type — and bound every run exactly how you want.</p>
             <ul class="feature-list">
-              <li>Modes: time, words, quote, code, custom &amp; adaptive train</li>
-              <li>Quote lengths from short to <em>thicc</em>; favourites too</li>
-              <li>Auto line-windowing keeps your eyes in one place</li>
+              <li>Train with known words, real quotes &amp; source code (25 languages)</li>
+              <li>Bound a run by time, word count or character limit</li>
+              <li>Quote lengths short → <em>thicc</em>, plus custom text &amp; adaptive drills</li>
               <li><span class="kbd">alt</span>+<span class="kbd">enter</span> restart · <span class="kbd">ctrl</span>+<span class="kbd">enter</span> fresh text</li>
             </ul>
           </div>
@@ -271,7 +271,11 @@
           <p>Soft, Minimal, Editorial or Terminal layouts — each in a palette to match your desk. Your choice persists along with every preference and stat.</p>
         </div>
 
-        <div class="theme-rail reveal" data-delay="1">
+        <div class="theme-carousel reveal" data-delay="1">
+          <button class="carousel-btn carousel-prev" data-carousel-prev aria-label="Previous themes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="theme-rail" data-carousel-rail>
           <!-- each card: swatch colour + screenshot of the settings panel in that theme -->
           <div class="theme-card"><figure data-cap="aurora theme"><img src="../assets/img/shots/theme-aurora.png" alt="aurora theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#6d7bf5,#9b8cff)"></span>aurora <b>dark</b></figcaption></figure></div>
           <div class="theme-card"><figure data-cap="ember theme"><img src="../assets/img/shots/theme-ember.png" alt="ember theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#ff7a4d,#ffb15c)"></span>ember <b>dark</b></figcaption></figure></div>
@@ -286,8 +290,12 @@
           <div class="theme-card"><figure data-cap="meadow theme"><img src="../assets/img/shots/theme-meadow.png" alt="meadow theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#3aa657,#86d49a)"></span>meadow <b>light</b></figcaption></figure></div>
           <div class="theme-card"><figure data-cap="lavender theme"><img src="../assets/img/shots/theme-lavender.png" alt="lavender theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#8b5cf6,#c4a3ff)"></span>lavender <b>light</b></figcaption></figure></div>
           <div class="theme-card"><figure data-cap="mist theme"><img src="../assets/img/shots/theme-mist.png" alt="mist theme" loading="lazy" decoding="async"><figcaption><span class="sw" style="background:linear-gradient(135deg,#2bb3a3,#7fd9cf)"></span>mist <b>light</b></figcaption></figure></div>
+          </div>
+          <button class="carousel-btn carousel-next" data-carousel-next aria-label="Next themes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
-        <p class="rail-hint">scroll the rail → · click any shot to enlarge</p>
+        <p class="rail-hint">auto-rotating · use ‹ › to browse · click any shot to enlarge</p>
       </div>
     </section>
 
@@ -321,7 +329,7 @@
             <svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="20" cy="44" r="5" fill="currentColor"/><circle cx="44" cy="20" r="5" fill="currentColor"/><rect x="22" y="38" width="28" height="4" rx="2" transform="rotate(-45 22 38)" fill="currentColor"/></svg>
             <b>nodex<span>/studio</span></b>
           </a>
-          <p class="foot-lede">Typing Mastery is built by Nodex Studio — focused, offline-first software for people who live in the keyboard.</p>
+          <p class="foot-lede">Typing Mastery is built by Nodex Studio — focused, offline-first software for people who live in the system.</p>
         </div>
         <div class="foot-col">
           <h4>Typing Mastery</h4>

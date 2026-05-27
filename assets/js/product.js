@@ -167,4 +167,40 @@
       }
     });
   }
+
+  /* ---- themes carousel: prev/next arrows + gentle autoplay ---- */
+  const rail = document.querySelector("[data-carousel-rail]");
+  if (rail) {
+    const stepSize = () => {
+      const card = rail.querySelector(".theme-card");
+      const gap = parseFloat(getComputedStyle(rail).columnGap || getComputedStyle(rail).gap) || 18;
+      return card ? card.getBoundingClientRect().width + gap : rail.clientWidth * 0.8;
+    };
+    const atEnd = () => rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+    const go = (dir) => {
+      if (dir > 0 && atEnd()) rail.scrollTo({ left: 0, behavior: "smooth" });
+      else rail.scrollBy({ left: dir * stepSize(), behavior: "smooth" });
+    };
+    const prev = document.querySelector("[data-carousel-prev]");
+    const next = document.querySelector("[data-carousel-next]");
+    prev && prev.addEventListener("click", () => go(-1));
+    next && next.addEventListener("click", () => go(1));
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let timer = null, visible = false;
+    const stop = () => { clearInterval(timer); timer = null; };
+    const start = () => { if (reduce || !visible || timer) return; timer = setInterval(() => go(1), 3800); };
+    const carousel = rail.closest(".theme-carousel");
+    if (carousel) {
+      carousel.addEventListener("mouseenter", stop);
+      carousel.addEventListener("mouseleave", start);
+      carousel.addEventListener("focusin", stop);
+      carousel.addEventListener("touchstart", stop, { passive: true });
+    }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((entries) => entries.forEach((e) => {
+        visible = e.isIntersecting; visible ? start() : stop();
+      }), { threshold: 0.25 }).observe(rail);
+    } else { visible = true; start(); }
+  }
 })();
