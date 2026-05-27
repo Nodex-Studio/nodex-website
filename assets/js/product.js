@@ -2,34 +2,35 @@
 (() => {
   "use strict";
 
-  const REPO = "Nodex-Studio/typing-mastery";
-  const RELEASES = `https://github.com/${REPO}/releases`;
-  const LATEST = `${RELEASES}/latest`;
-  const API = `https://api.github.com/repos/${REPO}/releases/latest`;
+  /* Binaries are served from Cloudflare R2. Bump VERSION + the filenames/sizes
+     here when a new build ships — the buttons, chips and labels update from this. */
+  const VERSION = "0.1.0";
+  const R2 = "https://pub-95b06253bba64371adceac77b65fb8ed.r2.dev/nodex-binaries/";
 
-  /* platform catalogue: each platform lists every build format it ships,
-     so every artifact (e.g. Linux .AppImage / .deb / .rpm) gets its own link */
+  /* each platform lists every build format it ships, so every artifact
+     (e.g. Linux .AppImage / .deb / .rpm) gets its own direct link */
   const PLATFORMS = {
     mac: {
       label: "macOS",
-      builds: [{ exts: [".dmg"], label: ".dmg" }],
+      builds: [{ label: ".dmg", file: "typing-mastery_0.1.0_universal.dmg", size: 10558295 }],
     },
     win: {
       label: "Windows",
       builds: [
-        { exts: [".msi"], label: ".msi" },
-        { exts: ["-setup.exe", ".exe"], label: ".exe" },
+        { label: ".msi", file: "typing-mastery_0.1.0_x64_en-US.msi", size: 5263360 },
+        { label: ".exe", file: "typing-mastery_0.1.0_x64-setup.exe", size: 4062374 },
       ],
     },
     linux: {
       label: "Linux",
       builds: [
-        { exts: [".appimage"], label: ".AppImage" },
-        { exts: [".deb"], label: ".deb" },
-        { exts: [".rpm"], label: ".rpm" },
+        { label: ".AppImage", file: "typing-mastery_0.1.0_amd64.AppImage", size: 83843576 },
+        { label: ".deb", file: "typing-mastery_0.1.0_amd64.deb", size: 6474402 },
+        { label: ".rpm", file: "typing-mastery-0.1.0-1.x86_64.rpm", size: 6475605 },
       ],
     },
   };
+  const dlURL = (b) => R2 + b.file;
 
   /* ---- detect OS ---- */
   function detectOS() {
@@ -39,69 +40,7 @@
     if (/linux|android|x11/.test(ua)) return "linux";
     return "mac";
   }
-
   const os = detectOS();
-  const state = { assets: null, tag: null, url: LATEST }; // url = where buttons point
-
-  /* find the release asset matching a build's extensions */
-  function findAsset(exts) {
-    if (!state.assets) return null;
-    for (const ext of exts) {
-      const e = ext.replace(/^-/, "").toLowerCase();
-      const hit = state.assets.find((a) => a.name.toLowerCase().endsWith(e));
-      if (hit) return hit;
-    }
-    return null;
-  }
-
-  /* the recommended (primary) asset for a platform = its first available build */
-  function primaryAsset(key) {
-    for (const bld of PLATFORMS[key].builds) {
-      const a = findAsset(bld.exts);
-      if (a) return a;
-    }
-    return null;
-  }
-
-  /* ---- render the primary (detected) download button + others ---- */
-  function render() {
-    document.querySelectorAll("[data-dl-primary]").forEach((btn) => {
-      const p = PLATFORMS[os];
-      const a = primaryAsset(os);
-      btn.href = a ? a.browser_download_url : (state.tag ? LATEST : RELEASES);
-      btn.querySelector("[data-dl-label]").textContent = `Download for ${p.label}`;
-    });
-
-    document.querySelectorAll("[data-dl-note]").forEach((note) => {
-      if (state.tag) {
-        const ver = state.tag.replace(/^app[-_]?/i, "");
-        note.innerHTML = `Free preview <b>${ver}</b> · native builds for macOS · Windows · Linux`;
-      } else {
-        note.innerHTML = `Free preview · native builds for macOS, Windows &amp; Linux — no account needed.`;
-      }
-    });
-
-    /* download chips — one per build format, so Linux shows .AppImage, .deb & .rpm */
-    document.querySelectorAll("[data-dl-others]").forEach((row) => {
-      row.innerHTML = "";
-      Object.keys(PLATFORMS).forEach((key) => {
-        const p = PLATFORMS[key];
-        p.builds.forEach((bld) => {
-          const a = findAsset(bld.exts);
-          const chip = document.createElement("a");
-          chip.className = "dl-chip";
-          chip.href = a ? a.browser_download_url : (state.tag ? LATEST : RELEASES);
-          chip.target = a ? "_self" : "_blank";
-          chip.rel = "noopener";
-          chip.innerHTML =
-            `${ICON[key]}<span>${p.label} ${bld.label}</span>` +
-            (a ? `<small>${prettySize(a.size)}</small>` : "");
-          if (key === os) chip.style.borderColor = "var(--accent)";
-          row.appendChild(chip);
-        });
-      });
-    });
-  }
 
   function prettySize(b) {
     if (!b) return "";
@@ -115,18 +54,37 @@
     linux: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 0 3 1.7 3 4 0 1.5.5 2.4 1.4 3.7 1 1.4 1.6 2.6 1.6 4.3 0 .8.4 1.3 1 2 .6.6 1 1 1 1.7 0 .9-.9 1.3-2 1.3-1 0-1.7-.4-2.4-.4-.5 0-.7.3-2.1.3h-1c-1.4 0-1.6-.3-2.1-.3-.7 0-1.4.4-2.4.4-1.1 0-2-.4-2-1.3 0-.7.4-1.1 1-1.7.6-.7 1-1.2 1-2 0-1.7.6-2.9 1.6-4.3C8.5 8.4 9 7.5 9 6c0-2.3 1-4 3-4zm-1.4 4.8c-.5 0-.8.4-.8.9s.3.9.8.9.8-.4.8-.9-.3-.9-.8-.9zm2.8 0c-.5 0-.8.4-.8.9s.3.9.8.9.8-.4.8-.9-.3-.9-.8-.9z"/></svg>`,
   };
 
-  /* ---- try the GitHub API; degrade gracefully ---- */
-  fetch(API, { headers: { Accept: "application/vnd.github+json" } })
-    .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-    .then((rel) => {
-      state.tag = rel.tag_name || rel.name;
-      state.assets = Array.isArray(rel.assets) ? rel.assets : [];
-      render();
-    })
-    .catch(() => { /* no published release yet — keep links to /releases */ })
-    .finally(render);
+  /* ---- render the detected primary button, the note, and the per-format chips ---- */
+  function render() {
+    document.querySelectorAll("[data-dl-primary]").forEach((btn) => {
+      const p = PLATFORMS[os];
+      btn.href = dlURL(p.builds[0]);
+      btn.querySelector("[data-dl-label]").textContent = `Download for ${p.label}`;
+    });
 
-  render(); // paint immediately with fallbacks
+    document.querySelectorAll("[data-dl-note]").forEach((note) => {
+      note.innerHTML = `Free preview <b>v${VERSION}</b> · native builds for macOS · Windows · Linux`;
+    });
+
+    /* one chip per build format — Linux shows .AppImage, .deb & .rpm */
+    document.querySelectorAll("[data-dl-others]").forEach((row) => {
+      row.innerHTML = "";
+      Object.keys(PLATFORMS).forEach((key) => {
+        const p = PLATFORMS[key];
+        p.builds.forEach((bld) => {
+          const chip = document.createElement("a");
+          chip.className = "dl-chip";
+          chip.href = dlURL(bld);
+          chip.rel = "noopener";
+          chip.innerHTML = `${ICON[key]}<span>${p.label} ${bld.label}</span><small>${prettySize(bld.size)}</small>`;
+          if (key === os) chip.style.borderColor = "var(--accent)";
+          row.appendChild(chip);
+        });
+      });
+    });
+  }
+
+  render();
 
   /* ---- lightbox for screenshots ---- */
   const lb = document.getElementById("lightbox");
