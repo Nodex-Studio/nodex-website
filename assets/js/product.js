@@ -7,11 +7,28 @@
   const LATEST = `${RELEASES}/latest`;
   const API = `https://api.github.com/repos/${REPO}/releases/latest`;
 
-  /* platform catalogue: label + the file extensions each platform produces */
+  /* platform catalogue: each platform lists every build format it ships,
+     so every artifact (e.g. Linux .AppImage / .deb / .rpm) gets its own link */
   const PLATFORMS = {
-    mac:   { label: "macOS",   exts: [".dmg", ".app.tar.gz"], formats: "Universal · .dmg" },
-    win:   { label: "Windows", exts: [".msi", ".exe", "-setup.exe"], formats: ".msi · .exe" },
-    linux: { label: "Linux",   exts: [".AppImage", ".deb", ".rpm"], formats: ".AppImage · .deb · .rpm" },
+    mac: {
+      label: "macOS",
+      builds: [{ exts: [".dmg"], label: ".dmg" }],
+    },
+    win: {
+      label: "Windows",
+      builds: [
+        { exts: [".msi"], label: ".msi" },
+        { exts: ["-setup.exe", ".exe"], label: ".exe" },
+      ],
+    },
+    linux: {
+      label: "Linux",
+      builds: [
+        { exts: [".appimage"], label: ".AppImage" },
+        { exts: [".deb"], label: ".deb" },
+        { exts: [".rpm"], label: ".rpm" },
+      ],
+    },
   };
 
   /* ---- detect OS ---- */
@@ -26,12 +43,22 @@
   const os = detectOS();
   const state = { assets: null, tag: null, url: LATEST }; // url = where buttons point
 
-  /* match a platform to its best asset from a release ---- */
-  function assetFor(key) {
+  /* find the release asset matching a build's extensions */
+  function findAsset(exts) {
     if (!state.assets) return null;
-    for (const ext of PLATFORMS[key].exts) {
-      const hit = state.assets.find((a) => a.name.toLowerCase().endsWith(ext.replace(/^-/, "").toLowerCase()));
+    for (const ext of exts) {
+      const e = ext.replace(/^-/, "").toLowerCase();
+      const hit = state.assets.find((a) => a.name.toLowerCase().endsWith(e));
       if (hit) return hit;
+    }
+    return null;
+  }
+
+  /* the recommended (primary) asset for a platform = its first available build */
+  function primaryAsset(key) {
+    for (const bld of PLATFORMS[key].builds) {
+      const a = findAsset(bld.exts);
+      if (a) return a;
     }
     return null;
   }
@@ -40,7 +67,7 @@
   function render() {
     document.querySelectorAll("[data-dl-primary]").forEach((btn) => {
       const p = PLATFORMS[os];
-      const a = assetFor(os);
+      const a = primaryAsset(os);
       btn.href = a ? a.browser_download_url : (state.tag ? LATEST : RELEASES);
       btn.querySelector("[data-dl-label]").textContent = `Download for ${p.label}`;
     });
@@ -54,21 +81,24 @@
       }
     });
 
-    /* "other platforms" chip row */
+    /* download chips — one per build format, so Linux shows .AppImage, .deb & .rpm */
     document.querySelectorAll("[data-dl-others]").forEach((row) => {
       row.innerHTML = "";
       Object.keys(PLATFORMS).forEach((key) => {
         const p = PLATFORMS[key];
-        const a = assetFor(key);
-        const chip = document.createElement("a");
-        chip.className = "dl-chip";
-        chip.href = a ? a.browser_download_url : (state.tag ? LATEST : RELEASES);
-        chip.target = a ? "_self" : "_blank";
-        chip.rel = "noopener";
-        chip.innerHTML =
-          `${ICON[key]}<span>${p.label}</span><small>${a ? prettySize(a.size) : p.formats}</small>`;
-        if (key === os) chip.style.borderColor = "var(--accent)";
-        row.appendChild(chip);
+        p.builds.forEach((bld) => {
+          const a = findAsset(bld.exts);
+          const chip = document.createElement("a");
+          chip.className = "dl-chip";
+          chip.href = a ? a.browser_download_url : (state.tag ? LATEST : RELEASES);
+          chip.target = a ? "_self" : "_blank";
+          chip.rel = "noopener";
+          chip.innerHTML =
+            `${ICON[key]}<span>${p.label} ${bld.label}</span>` +
+            (a ? `<small>${prettySize(a.size)}</small>` : "");
+          if (key === os) chip.style.borderColor = "var(--accent)";
+          row.appendChild(chip);
+        });
       });
     });
   }
