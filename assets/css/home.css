@@ -64,8 +64,8 @@
 
 /* "soon" ghost cards */
 .pcard--soon { border-style: dashed; background: transparent; min-height: 230px; }
-.pcard--soon .pcard-body { justify-content: center; gap: .6rem; }
-.pcard--soon h3 { color: var(--text-faint); font-style: italic; }
+.pcard--soon .pcard-body { justify-content: center; gap: .8rem; }
+.pcard--soon h3 { color: var(--text-dim); }
 .pcard--soon p { font-size: .92rem; }
 .soon-badge { align-self: flex-start; }
 
