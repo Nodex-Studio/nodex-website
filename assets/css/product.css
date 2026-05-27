@@ -216,6 +216,22 @@
 .lightbox-cap { position: absolute; bottom: clamp(14px, 3vw, 28px); left: 0; right: 0; text-align: center;
   font-family: var(--font-mono); font-size: .78rem; letter-spacing: .05em; color: rgba(255,255,255,.8); }
 
+/* ---- micro-interactions ----------------------------------------------- */
+/* keycaps press up toward the accent on hover */
+.kbd { transition: transform .15s var(--ease), border-color .2s, color .2s; }
+.kbd:hover { transform: translateY(-2px); color: var(--accent); border-color: var(--accent); }
+
+/* the green "live" light in the demo chrome breathes */
+.demo-chrome i:nth-child(3) { animation: live-pulse 2.4s var(--ease) infinite; }
+@keyframes live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(40, 200, 64, .55); }
+  55% { box-shadow: 0 0 0 5px rgba(40, 200, 64, 0); }
+}
+
+/* download chips ease their icon over on hover */
+.dl-chip svg { transition: transform .2s var(--ease); }
+.dl-chip:hover svg { transform: translateY(-1px) scale(1.08); }
+
 @media (max-width: 860px) {
   .phero-top { grid-template-columns: minmax(0, 1fr); }
   .feature { grid-template-columns: minmax(0, 1fr); }

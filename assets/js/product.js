@@ -126,6 +126,31 @@
     });
   }
 
+  /* ---- stat strip: numbers count up when scrolled into view ---- */
+  const stats = document.querySelectorAll(".stat .v");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (stats.length && "IntersectionObserver" in window && !reduceMotion) {
+    const countUp = (el) => {
+      const m = el.textContent.trim().match(/^(\d+)(\D*)$/);
+      if (!m) return;
+      const target = parseInt(m[1], 10), suffix = m[2] || "";
+      if (target === 0) return;                 // nothing to animate (e.g. "0")
+      const dur = 1100, t0 = performance.now();
+      const ease = (t) => 1 - Math.pow(1 - t, 3);
+      el.textContent = "0" + suffix;
+      const tick = (now) => {
+        const p = Math.min((now - t0) / dur, 1);
+        el.textContent = Math.round(ease(p) * target) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const so = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { countUp(e.target); so.unobserve(e.target); }
+    }), { threshold: 0.5 });
+    stats.forEach((el) => so.observe(el));
+  }
+
   /* ---- themes carousel: prev/next arrows + gentle autoplay ---- */
   const rail = document.querySelector("[data-carousel-rail]");
   if (rail) {

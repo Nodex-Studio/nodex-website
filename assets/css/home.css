@@ -85,6 +85,21 @@
 .cta-band h2 { max-width: 18ch; margin: 0 auto 1.4rem; }
 .cta-band .lead { margin: 0 auto 2rem; }
 
+/* ---- micro-interactions ----------------------------------------------- */
+/* hero status dots breathe, gently staggered */
+.hero-meta .dot { animation: dot-pulse 3.4s var(--ease) infinite; }
+.hero-meta span:nth-child(2) .dot { animation-delay: .45s; }
+.hero-meta span:nth-child(3) .dot { animation-delay: .9s; }
+.hero-meta span:nth-child(4) .dot { animation-delay: 1.35s; }
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 6px var(--accent); }
+  50% { box-shadow: 0 0 16px 2px var(--accent); }
+}
+
+/* tags lift on hover */
+.tag { transition: transform .2s var(--ease), border-color .2s, color .2s, background-color .2s; }
+.tag:hover { transform: translateY(-2px); border-color: var(--line-strong); color: var(--text); }
+
 @media (max-width: 860px) {
   .pcard--feature { flex-direction: column; }
   .pcard--feature .pcard-media { border-right: 0; border-bottom: 1px solid var(--line); min-height: 240px; flex-basis: auto; }

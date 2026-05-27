@@ -220,6 +220,27 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.7rem); letter-spacing: -.006em; }
 .reveal[data-delay="3"] { transition-delay: .24s; }
 .reveal[data-delay="4"] { transition-delay: .32s; }
 
+/* ---- micro-interactions ----------------------------------------------- */
+/* CTA icons react to intent: forward arrows slide, download arrows dip */
+.btn svg { transition: transform .25s var(--ease); }
+.btn:hover svg { transform: translateX(3px); }
+.cta-band .btn:hover svg,
+[data-dl-primary]:hover svg { transform: none; animation: btn-dip .6s var(--ease); }
+@keyframes btn-dip { 30% { transform: translateY(3px); } 62% { transform: translateY(-1px); } }
+
+/* brand mark: gentle tilt + glow on hover */
+.brand .mark { transition: transform .4s var(--ease), filter .3s; }
+.brand:hover .mark { transform: rotate(-8deg) scale(1.08); filter: drop-shadow(0 0 9px var(--accent)); }
+
+/* theme toggle: the glyph turns as you reach for it */
+.theme-toggle svg { transition: transform .5s var(--ease); }
+.theme-toggle:hover svg { transform: rotate(40deg); }
+
+/* eyebrow rule draws itself in as its section reveals */
+.eyebrow::before { transition: width .7s var(--ease) .15s; }
+.reveal:not(.in) .eyebrow::before,
+.eyebrow.reveal:not(.in)::before { width: 0; }
+
 /* ---- responsive ------------------------------------------------------- */
 @media (max-width: 720px) {
   .nav a:not(.nav-mobile-only) { display: none; }
