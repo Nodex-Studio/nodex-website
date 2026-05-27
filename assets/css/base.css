@@ -135,6 +135,8 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.7rem); letter-spacing: -.006em; }
 }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -16px color-mix(in oklab, var(--accent) 75%, transparent); }
 .btn:active { transform: translateY(0); }
+.btn:disabled, .btn[disabled] { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.btn:disabled:hover, .btn[disabled]:hover { transform: none; box-shadow: none; }
 .btn--ghost {
   --bbg: transparent; --bfg: var(--text);
   border-color: var(--line-strong); box-shadow: none;
@@ -203,6 +205,7 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.7rem); letter-spacing: -.006em; }
 }
 .foot-col a { display: block; color: var(--text-dim); padding-block: .32rem; transition: color .2s; }
 .foot-col a:hover { color: var(--accent); }
+.foot-static { display: block; color: var(--text-faint); padding-block: .32rem; }
 .foot-base {
   margin-top: clamp(36px, 6vw, 64px); padding-top: 26px; border-top: 1px solid var(--line);
   display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center;

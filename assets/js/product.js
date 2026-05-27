@@ -75,9 +75,9 @@
     document.querySelectorAll("[data-dl-note]").forEach((note) => {
       if (state.tag) {
         const ver = state.tag.replace(/^app[-_]?/i, "");
-        note.innerHTML = `Latest release <b>${ver}</b> · free &amp; open source · macOS · Windows · Linux`;
+        note.innerHTML = `Free preview <b>${ver}</b> · native builds for macOS · Windows · Linux`;
       } else {
-        note.innerHTML = `Builds are published to <b>GitHub Releases</b> — open-source, no account needed.`;
+        note.innerHTML = `Free preview · native builds for macOS, Windows &amp; Linux — no account needed.`;
       }
     });
 
