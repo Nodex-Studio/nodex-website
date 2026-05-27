@@ -1,9 +1,8 @@
 /* =========================================================================
-   Typing Mastery — product page (editorial, pink accent)
+   Typing Mastery — product page
+   Accent + theme tokens are inherited from base.css so every page shares one
+   rose-crimson palette. Do not re-declare --accent here.
    ========================================================================= */
-body.product { --accent: #e6396b; --accent-2: #ff7a59; --accent-soft: rgba(230, 57, 107, .15); }
-:root[data-theme="light"] body.product,
-body.product:where([data-x]) { --accent: #d62f5c; }
 
 /* theme-aware screenshots: show the set matching the active theme */
 .shot-dark { display: block; }
@@ -183,9 +182,11 @@ body.product:where([data-x]) { --accent: #d62f5c; }
 .price-card h3 { margin: .4rem 0 1.4rem; font-style: italic; }
 .price-list { text-align: left; display: flex; flex-direction: column; gap: .7rem; margin: 0 0 1.8rem; }
 .price-list li { list-style: none; display: flex; gap: .7rem; color: var(--text-dim); font-size: .98rem; }
-.price-list li::before { content: ""; flex: none; width: 18px; height: 18px; margin-top: .15em; border-radius: 50%; background: var(--accent-soft);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6396b' stroke-width='3'%3E%3Cpath d='M5 13l4 4L19 7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-size: 12px; background-repeat: no-repeat; background-position: center; }
+/* check rendered in --accent via a mask so it tracks the theme (dark + light) */
+.price-list li::before { content: ""; flex: none; width: 18px; height: 18px; margin-top: .15em;
+  background-color: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3'%3E%3Cpath d='M5 13l4 4L19 7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3'%3E%3Cpath d='M5 13l4 4L19 7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat; }
 .price-buy { width: 100%; justify-content: center; font-size: .92rem; padding-block: 1em; }
 .price-note { font-family: var(--font-mono); font-size: .74rem; line-height: 1.6; color: var(--text-faint); margin: 1rem 0 1.4rem; }
 .price-note b { color: var(--text-dim); font-weight: 500; }
