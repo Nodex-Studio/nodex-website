@@ -135,8 +135,8 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.7rem); letter-spacing: -.006em; }
 }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -16px color-mix(in oklab, var(--accent) 75%, transparent); }
 .btn:active { transform: translateY(0); }
-.btn:disabled, .btn[disabled] { opacity: .45; cursor: not-allowed; box-shadow: none; }
-.btn:disabled:hover, .btn[disabled]:hover { transform: none; box-shadow: none; }
+.btn:disabled, .btn[disabled], .btn.is-disabled { opacity: .45; cursor: not-allowed; box-shadow: none; pointer-events: none; }
+.btn:disabled:hover, .btn[disabled]:hover, .btn.is-disabled:hover { transform: none; box-shadow: none; }
 .btn--ghost {
   --bbg: transparent; --bfg: var(--text);
   border-color: var(--line-strong); box-shadow: none;

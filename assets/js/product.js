@@ -9,11 +9,8 @@
 
   /* each platform lists every build format it ships, so every artifact
      (e.g. Linux .AppImage / .deb / .rpm) gets its own direct link */
+  /* Windows & Linux only — there is no macOS build yet. */
   const PLATFORMS = {
-    mac: {
-      label: "macOS",
-      builds: [{ label: ".dmg", file: "typing-mastery_0.1.0_universal.dmg", size: 10558295 }],
-    },
     win: {
       label: "Windows",
       builds: [
@@ -32,15 +29,16 @@
   };
   const dlURL = (b) => R2 + b.file;
 
-  /* ---- detect OS ---- */
+  /* ---- detect OS (mac is detected but unsupported) ---- */
   function detectOS() {
     const ua = (navigator.userAgentData?.platform || navigator.platform || navigator.userAgent || "").toLowerCase();
-    if (/mac|iphone|ipad|ipod/.test(ua)) return "mac";
     if (/win/.test(ua)) return "win";
     if (/linux|android|x11/.test(ua)) return "linux";
-    return "mac";
+    if (/mac|iphone|ipad|ipod/.test(ua)) return "mac";   // no build — show apology
+    return "win";                                         // sensible default for unknown desktops
   }
   const os = detectOS();
+  const supported = PLATFORMS[os];   // undefined on macOS
 
   function prettySize(b) {
     if (!b) return "";
@@ -49,7 +47,6 @@
   }
 
   const ICON = {
-    mac: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c.1 1.2-.4 2.3-1.1 3.1-.8.9-2 1.6-3.2 1.5-.1-1.1.5-2.3 1.2-3 .8-.9 2.1-1.5 3.1-1.6zM20 17.2c-.5 1.2-.8 1.7-1.5 2.7-1 1.5-2.4 3.3-4.1 3.3-1.5 0-1.9-1-4-1-2 0-2.5 1-4 1-1.7 0-3-1.7-4-3.1-2.7-3.9-3-8.5-1.3-11 1.2-1.7 3-2.7 4.8-2.7 1.8 0 2.9 1 4.4 1 1.4 0 2.3-1 4.4-1 1.5 0 3.2.8 4.3 2.3-3.8 2-3.2 7.4.5 8.5z"/></svg>`,
     win: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 10.5 4.5v7H3zM11.5 4.4 21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.4z"/></svg>`,
     linux: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 0 3 1.7 3 4 0 1.5.5 2.4 1.4 3.7 1 1.4 1.6 2.6 1.6 4.3 0 .8.4 1.3 1 2 .6.6 1 1 1 1.7 0 .9-.9 1.3-2 1.3-1 0-1.7-.4-2.4-.4-.5 0-.7.3-2.1.3h-1c-1.4 0-1.6-.3-2.1-.3-.7 0-1.4.4-2.4.4-1.1 0-2-.4-2-1.3 0-.7.4-1.1 1-1.7.6-.7 1-1.2 1-2 0-1.7.6-2.9 1.6-4.3C8.5 8.4 9 7.5 9 6c0-2.3 1-4 3-4zm-1.4 4.8c-.5 0-.8.4-.8.9s.3.9.8.9.8-.4.8-.9-.3-.9-.8-.9zm2.8 0c-.5 0-.8.4-.8.9s.3.9.8.9.8-.4.8-.9-.3-.9-.8-.9z"/></svg>`,
   };
@@ -57,13 +54,25 @@
   /* ---- render the detected primary button, the note, and the per-format chips ---- */
   function render() {
     document.querySelectorAll("[data-dl-primary]").forEach((btn) => {
-      const p = PLATFORMS[os];
-      btn.href = dlURL(p.builds[0]);
-      btn.querySelector("[data-dl-label]").textContent = `Download for ${p.label}`;
+      const label = btn.querySelector("[data-dl-label]");
+      if (supported) {
+        btn.href = dlURL(supported.builds[0]);
+        btn.removeAttribute("aria-disabled");
+        btn.classList.remove("is-disabled");
+        label.textContent = `Download for ${supported.label}`;
+      } else {
+        /* macOS visitor — no build to offer; disable the CTA, point to chips below */
+        btn.removeAttribute("href");
+        btn.setAttribute("aria-disabled", "true");
+        btn.classList.add("is-disabled");
+        label.textContent = "Sorry — no macOS build yet";
+      }
     });
 
     document.querySelectorAll("[data-dl-note]").forEach((note) => {
-      note.innerHTML = `Free preview <b>v${VERSION}</b> · native builds for macOS · Windows · Linux`;
+      note.innerHTML = supported
+        ? `Free preview <b>v${VERSION}</b> · Windows &amp; Linux only — sorry, no macOS build yet.`
+        : `Sorry, there's no macOS build yet — Typing Mastery is <b>Windows &amp; Linux</b> only for now. Grab a build below.`;
     });
 
     /* one chip per build format — Linux shows .AppImage, .deb & .rpm */
