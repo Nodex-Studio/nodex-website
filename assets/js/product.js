@@ -71,7 +71,7 @@
 
     document.querySelectorAll("[data-dl-note]").forEach((note) => {
       note.innerHTML = supported
-        ? `Free preview <b>v${VERSION}</b> · Windows &amp; Linux only — sorry, no macOS build yet.`
+        ? `Free forever <b>v${VERSION}</b> · Windows &amp; Linux only — sorry, no macOS build yet.`
         : `Sorry, there's no macOS build yet — Typing Mastery is <b>Windows &amp; Linux</b> only for now. Grab a build below.`;
     });
 
