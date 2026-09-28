@@ -89,6 +89,28 @@ class TechnicalTests(unittest.TestCase):
         self.assertEqual(self.page.count('href="#pinned-toolchain"'), 2)
         for phrase in ['Exact Node.js', 'Configuration hash', 'Pinned does not mean permanently frozen', 'npm ci']:
             self.assertIn(phrase, self.page)
+    def test_release_execution_details(self):
+        self.assertIn('href="#release-execution"', self.page)
+        section = re.search(r'<section id="release-execution".*?</section>', self.page, re.S).group()
+        for anchor in ['exact-release-approval', 'release-delivery', 'factory-registration',
+                       'candidate-mounting', 'initial-querying', 'activation-commit', 'instance-retirement']:
+            self.assertIn(f'id="{anchor}"', section)
+        for phrase in ['transactional outbox', 'base64 digest', 'document.currentScript',
+                       'monotonically increasing generation', 'idempotent', 'not the published release pointer']:
+            self.assertIn(phrase, section)
+    def test_refresh_free_recovery_policy(self):
+        for anchor in ['resource-scopes', 'dashboard-recovery']:
+            self.assertIn(f'id="{anchor}"', self.page)
+        for phrase in ['Normal release updates do not refresh the Studio',
+                       'Finish retirement before admitting another candidate',
+                       'Mark the scope closed before cleanup',
+                       'Dashboard-only recovery before a full-page refresh',
+                       'Bound automatic recovery attempts',
+                       'Swapping is not itself leak recovery',
+                       'resource-wrapper APIs are not yet defined',
+                       'Refresh-free lifecycle acceptance']:
+            self.assertIn(phrase, self.page)
+        self.assertNotIn('immediate collection or refresh-free operation is not guaranteed', self.page)
 
 if __name__ == '__main__':
     unittest.main()

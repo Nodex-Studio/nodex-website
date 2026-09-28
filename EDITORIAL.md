@@ -18,8 +18,11 @@ AI chat guides dashboard creation and iterative editing inside the studio.
   not a fresh native ES-module import per revision. Dispose instances, unregister
   retired factories, and release side effects and references. Store history on
   the backend and reload bundles for rollback. Check for revision-specific imports
-  in dependencies. Test repeated updates for retained resources; neither HMR nor
-  cleanup guarantees immediate collection, leak-free execution, or no future refresh.
+  in dependencies. Normal updates swap without refreshing the Studio. Use per-instance
+  host-managed resource scopes, bounded replacements, and dashboard-only recovery
+  first; full-page refresh is an exceptional shared-page failure fallback. Test repeated
+  updates for retained resources; neither HMR nor cleanup guarantees immediate
+  collection, leak-free execution, or no future refresh.
 - Native modules share the studio page's browser privileges. Do not claim that
   SDK restrictions, testing, error boundaries, or Shadow DOM sandbox arbitrary
   JavaScript. Approved releases are trusted frontend code. Build isolation remains.

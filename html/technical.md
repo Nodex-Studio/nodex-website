@@ -123,6 +123,8 @@ A supplier double-click executes the generated handler: SDK request → authoriz
 
 **An approved preview is not a publication.** Publishing is a separate authorized operation that pins the accepted release and configuration version for viewers; further draft edits do not change that published pair. See [HTTP contracts](#http), [native runtime interfaces](#runtime), and [revision switching](#delivery) for the detailed boundaries.
 
+For the service transactions, browser loading, factory registry, and activation handover behind steps 7–12, read [Release to live UI: execution details](#release-execution).
+
 ## Agentic authoring loop
 
 <!--AUTHORING-->
@@ -264,7 +266,215 @@ State can change while the candidate loads. For the first implementation, briefl
 
 An illustrative readiness timeout is 15 seconds; configure it and report timeout distinctly from empty data. Keep the previous dashboard on ordinary loading failures. Same-thread infinite loops can prevent even timeout handlers from firing. Error boundaries cannot guarantee studio recovery from arbitrary same-page code.
 
-Each release has a distinct script URL. This avoids a native ES-module-cache entry per revision, but removing the script node alone does not unload executed code. Dispose instances, destroy chart/graphics resources, unregister unused factories, and release references so objects become eligible for collection. Browser-managed caches and leaks may still persist; immediate collection or refresh-free operation is not guaranteed. Keep history on the backend and reload bundles for rollback. Test repeated replacement and rollback for retained objects and listeners. Native module caching is why per-revision `import()` is not this design’s delivery mechanism. [Dynamic import and cache behavior](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import).
+**Normal release updates do not refresh the Studio.** Keep the shell, chat, editor, and session running while the dashboard host stages and swaps native instances. Serialize replacements per dashboard slot: normally retain one active instance and briefly one candidate (or one retiring instance after activation). Finish retirement before admitting another candidate; coalesce queued updates to the latest desired release. A cleanup failure pauses that slot's replacement loop instead of accumulating more instances.
+
+Each release has a distinct script URL. This avoids a native ES-module-cache entry per revision, but removing the script node alone does not unload executed code. Dispose instances, destroy chart/graphics resources, unregister unused factories, and release references so objects become eligible for collection. Keep history on the backend and reload approved, still-authorized bundles for rollback. Test repeated replacement and rollback for retained objects and listeners. Native module caching is why per-revision `import()` is not this design’s delivery mechanism. [Dynamic import and cache behavior](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import).
+
+Refresh-free swapping is the normal workflow, not an unconditional guarantee for arbitrary same-page code. Use [host-managed cleanup and dashboard-only recovery](#resource-scopes) first; a full-page refresh is an exceptional fallback when shared-page health cannot be restored.
+
+## Release to live UI: execution details
+
+Approval, delivery, registration, mounting, querying, activation, and retirement are distinct operations. This section specifies their proposed implementation behind workflow steps 7–12. The APIs and runtime remain a design, not an implemented platform. Code snippets illustrate boundaries; omitted helpers belong to the future host or generated bundle.
+
+<h3 id="exact-release-approval">1. Approve exact release bytes, not a moving branch</h3>
+
+“Exact release” binds the approval to a specific compiled artifact and its provenance. It is not approval of a prompt or whichever build happens to be latest.
+
+```text
+Project                 prj_retail
+Source revision         rev_42
+Build                   build_108
+Release                 rel_42
+Toolchain profile       toolchain_A
+Manifest digest         sha256:<manifest digest>
+JavaScript / CSS digests sha256:<artifact digests>
+Test evidence           checks_for_build_108
+```
+
+The reviewer sees the requested change, source diff, exact release identity, dependency and operation changes, test results, and warnings. Preapproval execution occurs in the isolated test environment, not inside the production studio. Source, build output, and manifest bytes are immutable; the release’s approval status is mutable.
+
+The review request uses the existing contract:
+
+```http
+POST /api/v1/projects/prj_retail/releases/rel_42/review
+If-Match: "release-5"
+Idempotency-Key: approval-unique-id
+X-CSRF-Token: <session-csrf-token>
+Content-Type: application/json
+
+{"decision":"approve","reason":"Verified chart behavior and authorized queries"}
+```
+
+The backend authenticates the reviewer, checks the reviewer role, and conditionally updates the release using its ETag. It verifies that the release is awaiting approval, that successful evidence matches the exact build, and that stored artifacts match their digests. It records reviewer identity, timestamp, reason, and manifest digest before changing the status to approved. **Any changed artifact requires a new release and approval.** Do not rebuild after review and assume the new bytes are equivalent.
+
+Use a transactional outbox: commit the approval and a pending event record in the same database transaction. A dispatcher emits the event with retries and a stable event ID. Delivery is at least once, so clients still deduplicate. This closes the gap where approval succeeds but its notification is lost.
+
+“No self-approval” means the coding agent has no authority or credentials to approve its output. Requiring the human reviewer to differ from the requesting author is a separate governance policy. Approval is not proof that same-page code is safe.
+
+<h3 id="release-delivery">2. Deliver approved assets to the browser</h3>
+
+The studio receives `release.approved` with project, run, release, and event sequence. The event contains neither application code nor an authorization grant. The host checks whether this is still its desired edit, deduplicates the event, and fetches the release’s current status and manifest from `GET /api/v1/projects/prj_retail/releases/rel_42`.
+
+The server checks access; the host validates the project/release identity, runtime major, IIFE registration format, normalized asset paths, and configuration compatibility. It constructs an authenticated same-origin URL and installs load/error handlers before inserting a classic script element:
+
+```js
+// Illustrative loader setup; the host implements validation and handlers.
+const script = document.createElement("script");
+script.src = approvedAssetUrl;
+script.integrity = approvedSriDigest;
+script.crossOrigin = "anonymous";
+// Deliberately not type="module". Attach handlers before inserting it.
+```
+
+The integrity value is the hash algorithm plus a base64 digest derived from the approved artifact hash, not the manifest’s raw hexadecimal string. The browser can reject bytes that do not match. This verifies delivery integrity, not behavioral safety. See [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity).
+
+Load and track the release’s CSS separately, including failures and ownership references. Scoped selectors prevent accidental restyling of the active view while a candidate stages. Script load success alone is insufficient: the expected factory must also register, within a bounded deadline.
+
+<h3 id="factory-registration">3. Register a factory without rendering</h3>
+
+The compiled bundle contains its components and revision-specific dependencies in an IIFE scope. It registers a factory with the persistent host:
+
+```js
+(function () {
+  // Compiled implementation, including createDashboardModule, lives here.
+  window.NodexRuntime.register({
+    projectId: "prj_retail",
+    releaseId: "rel_42",
+    runtimeApiMajor: 1,
+    create() {
+      return createDashboardModule();
+    }
+  });
+})();
+```
+
+Registration means “this factory can create release 42 instances.” It must not render, query data, or start timers. The host checks the expected pending load, supported runtime major, required method shapes, and duplicate/retired-registration rules. It then retains the factory and calls `create()` when an instance is needed.
+
+The host registry tracks the factory, active-instance references, pending-load references, and script/style ownership by project and release. Multiple dashboard instances may share one loaded factory; their application state remains separate.
+
+Correlate registration with the actual loading script element and load generation, not only the release ID. A cancelled load and a later reload of the same release must not be confused. Synchronous classic-script registration can inspect `document.currentScript`; the host maps that element to its pending load. Reject registration outside that expected synchronous window. This is lifecycle bookkeeping, not protection against malicious same-page code. See [currentScript](https://developer.mozilla.org/en-US/docs/Web/API/Document/currentScript).
+
+<h3 id="candidate-mounting">4. Mount a candidate instance in the native DOM</h3>
+
+The host creates an instance ID, request AbortController, instance-scoped SDK, and a staging container. The container is invisible and noninteractive but has real dimensions. Prefer a positioned container with hidden visibility and `inert` over `display: none`, since charts need layout measurements.
+
+```js
+// Values are prepared and validated by the host.
+const instance = registration.create();
+const handle = instance.mount(container, {
+  instanceId,
+  projectId,
+  releaseId,
+  mode: "preview",
+  phase: "staging",
+  theme,
+  locale,
+  timezone,
+  scopeClass,
+  initialState,
+  configuration,
+  sdk,
+  signal: controller.signal
+});
+```
+
+The instance creates its React root and renders into the assigned container. `mount` returns its handle synchronously so cleanup is possible while data loads. The handle exposes readiness, context updates, state serialization/restoration, and disposal. If mounting throws before returning a handle, the implementation must unwind partially allocated resources.
+
+Calling `root.render()` is not the readiness signal. The application resolves `handle.ready` only after required initial data and views settle; React rendering does not itself establish application readiness. See [React root lifecycle](https://react.dev/reference/react-dom/client/createRoot). The previous dashboard stays visible throughout preparation.
+
+<h3 id="initial-querying">5. Query authorized data and finish rendering</h3>
+
+The mounted application uses the supplied SDK, not the coding agent, to request initial data:
+
+```js
+const result = await context.sdk.query({
+  operationId: "retail.supplier.facilities",
+  parameters: { supplierId: "supplier_17" },
+  pageSize: 100
+}, { signal: requestController.signal });
+```
+
+The SDK scopes the request to the instance’s project and release and calls `POST /api/v1/projects/prj_retail/releases/rel_42/queries`. It combines instance disposal with per-request cancellation. The gateway independently checks session identity, current project/release access, release status, named operation, parameter schema, query limits, and data permissions before invoking the bipp adapter. The release’s declared operations never grant permission.
+
+The server-only adapter translates the request to verified bipp interfaces and returns normalized rows and metadata. Exact bipp endpoint names remain unverified; frontend code cannot invent them. Service credentials stay on the backend.
+
+The application rejects stale responses using a request/selection generation and checks disposal before updating state. Required views render the results and complete readiness. Empty data may resolve with `status: "empty"`; a failed required query rejects readiness. Browser abort stops applicable fetch work, while upstream cancellation remains best effort and adapter-dependent. See [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort).
+
+<h3 id="activation-commit">6. Activate at an explicit host commit point</h3>
+
+Keep a monotonically increasing generation for the desired load: release 42 might use generation 7; a later request for release 43 advances it to 8. Each asynchronous continuation checks that its generation is still current. An obsolete candidate is cleaned up, never activated—even when the release ID happens to match a later reload.
+
+For the final handover, the host:
+
+1. Waits for candidate readiness, with a configured deadline.
+2. Briefly pauses interaction with the old dashboard.
+3. Captures its latest serializable state and restores compatible state into the candidate.
+4. Waits for restoration and checks the desired generation again.
+5. Updates the candidate context to the active phase, then rechecks after that asynchronous call.
+6. Commits the active-instance pointer, container visibility, interaction ownership, and appropriate focus in a short synchronous operation.
+7. Starts retirement of the old instance.
+
+Preparation happens before the visibility change. The first implementation must not perform irreversible business writes during staging or activation. On a precommit failure, dispose the candidate and resume the old view; on a first-build failure, keep the empty canvas with diagnostics. Activation changes this editor’s visible preview, not the published release pointer.
+
+Same-thread infinite loops can prevent deadlines from firing. Neither lifecycle promises nor error boundaries provide isolation from hostile native code.
+
+<h3 id="instance-retirement">7. Retire instances, then release unused factories</h3>
+
+After a successful switch, the host aborts the old instance’s request scope and calls `await oldHandle.dispose()`. Disposal is idempotent and must unmount React, cancel requests, clear timers and animation loops, unsubscribe listeners and observers, remove overlays/portals, destroy chart instances, release graphics resources, and drop callback/store references.
+
+Only then release the host’s ownership references. If another active instance or pending load uses that factory or stylesheet, retain it. Otherwise unregister the factory, remove owned script/style elements as appropriate, clear loader callbacks, and delete registry references. Removing a script element alone does not undo its executed code. Objects become eligible for collection only after their references and side effects are released; collection timing is not guaranteed.
+
+A cleanup error after activation is recorded as degraded host health; it does not automatically roll back the newly visible dashboard. Pause further replacements for the affected slot and attempt bounded cleanup and dashboard-only recovery as described below. Retain release history on the backend, not as every past factory in browser memory.
+
+<h3 id="resource-scopes">Host-managed resource scopes: keep swapping without a page refresh</h3>
+
+Create a resource scope before mounting each instance. The host's SDK wrappers and vetted component adapters register cleanup actions with this scope. Generated code must use these wrappers for supported resources and register explicit disposers for custom integrations. React unmounting removes the React tree, but external subscriptions and other non-React resources still need cleanup. [React root lifecycle](https://react.dev/reference/react-dom/client/createRoot).
+
+| Resource owned by an instance | Scope retirement action |
+| --- | --- |
+| Queries and subscriptions | Abort applicable requests, unsubscribe, and reject late responses by instance/generation |
+| Timers and animation loops | Cancel scheduled work and prevent new scheduling after scope closure |
+| DOM listeners and observers | Remove registered listeners and disconnect observers |
+| Chart and graphics instances | Call adapter-specific destruction and graphics-resource disposal methods |
+| Workers | Terminate instance-owned workers; release message handlers and host references |
+| Portals and overlays | Remove instance-owned elements outside the main dashboard container |
+| Factories and styles | Release host ownership references; retain shared assets only while another instance/load needs them |
+
+Mark the scope closed before cleanup so it rejects new acquisitions and ignores callbacks from retired generations. Abort outstanding work, invoke idempotent application disposal, and run remaining tracked disposers even if one fails. Coordinate dependency order so framework teardown can still access the resources it needs. Record each failure; a timeout bounds the host's wait but cannot interrupt a synchronous main-thread hang or prove disposal completed. Shared assets belong to separately reference-counted host ownership, not an individual instance's unconditional destructor.
+
+This is a proposed extension to the host and SDK implementation; resource-wrapper APIs are not yet defined in the downloadable TypeScript contracts. It is lifecycle management, **not a sandbox**. Do not globally monkey-patch browser APIs and claim complete tracking. Direct global listeners, third-party caches, and allocations outside the scope can escape it; generated code and dependency adapters must cooperate.
+
+<h3 id="dashboard-recovery">Dashboard-only recovery before a full-page refresh</h3>
+
+1. Pause the affected slot's replacement queue and invalidate pending load generations. Cancel and dispose any candidate.
+2. Capture bounded, compatible dashboard state if the instance can still serialize safely. If not, recover with clean state and tell the user.
+3. Close the affected scopes, dispose their instances, and release unused factory/style references. Run all available cleanup even when some actions fail.
+4. Recreate only the dashboard container and React root. Re-fetch a known-good release after checking current approval, revocation, and access; never bypass authorization to recover.
+5. Restore compatible state, wait for readiness, and activate the recovered dashboard. Keep the Studio shell, chat, navigation, and session in place.
+6. Resume swapping only when tracked cleanup and readiness checks pass. Bound automatic recovery attempts; if they fail, keep replacements paused and show diagnostics and a controlled full-page refresh option. Recovery does not change the published release pointer.
+
+For computation delegated to a worker, terminating and recreating that worker resets its execution context without reloading the Studio. Workers cannot directly manipulate the ordinary DOM; restarting one does not remove main-thread chart objects or DOM leaks. Worker termination also does not undo server-side work. [Worker lifecycle and limitations](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers).
+
+**Swapping is not itself leak recovery.** A surviving global listener can keep an old instance reachable after its container is removed; another swap can add more retained objects. Unreachable objects are eligible for garbage collection, but collection timing is not guaranteed. A dashboard-only restart cannot reliably undo untracked global references, shared-state corruption, or an infinite loop on the host thread. Health checks are evidence of recovery, not proof of a leak-free heap. [JavaScript memory management](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Memory_management).
+
+Capture project/release/instance IDs, load generation, lifecycle timestamps, cleanup duration/outcomes, scope resource counts, factory/style reference counts, and recovery attempts. Send bounded diagnostic metadata to the backend; do not retain retired instance objects or closures in browser logs/history, or log raw query data. Compare tracked resources against baseline and use repeated-swap browser profiling to find untracked retention.
+
+**Product promise:** dashboard releases swap natively without reloading the Studio during normal operation. Dashboard-scoped recovery comes first. A full-page refresh remains an exceptional fallback for shared-page failures, not a routine release step.
+
+### Ownership and completion boundaries
+
+| Operation | Owner | Completion means |
+| --- | --- | --- |
+| Approve | Release service + authorized reviewer | Exact artifact identity and evidence accepted; audit/outbox committed |
+| Deliver | Host loader + authenticated artifact service | Approved assets retrieved and integrity checks satisfied |
+| Register | Bundle + host registry | Expected factory is available; no application mounted yet |
+| Mount | Factory instance + native host | Candidate exists with a disposable lifecycle handle |
+| Query / ready | SDK, gateway, adapter, application | Required authorized data/views have settled |
+| Activate | Native host | Candidate becomes the current visible instance |
+| Retire | Old instance + host registry | Owned resources released; unused factory references removed |
+| Publish | Authorized publisher + project service | Release/configuration pair pinned for viewers |
+
+Approval audit records and the outbox are server implementation records. Load-generation tracking, script correlation, reference counting, and commit/cleanup behavior are host implementation responsibilities. The existing TypeScript contracts describe the public lifecycle; these implementation details still require code and tests. In particular, test cancellation followed by reloading the same release, not only two different releases finishing out of order.
 
 ## HTTP API contracts
 
@@ -365,6 +575,7 @@ The bipp adapter translates Nodex operations to supported bipp APIs while preser
 | Build completes after cancellation | Check run state and lease before commit | Work may have consumed resources already |
 | Stale or duplicate release event | Re-fetch state; verify desired token after each await | Requires correctness in host implementation |
 | Mount failure | Dispose candidate; keep old view; surface diagnostics | A hung shared thread can defeat recovery |
+| Retirement or cleanup failure | Pause the affected replacement queue; run scoped cleanup and bounded dashboard-only recovery | Untracked leaks or shared-page corruption may still require a full-page refresh |
 | Access revoked during session | Recheck gateway calls and assets; notify host | Downloaded code/data cannot be clawed back |
 | Model schema changed | Version-aware adapter validation; explicit error | A pinned application does not freeze external models |
 
@@ -384,6 +595,8 @@ Trace project ID, run ID, revision ID, build ID, release ID, runtime instance ID
 | 6 · Publication | Pinned release, recovery, monitoring and embedding integration | Draft does not alter published app; rollback and session expiry tested |
 
 Mandatory host tests: revision 43 wins when revision 42 resolves late; a failed candidate leaves 41 visible; disposal twice is harmless; style and listener counts return to baseline; two mounted instances do not collide; state migration failure is visible; permission changes invalidate queries; a revoked release cannot be newly loaded. A headless test must exercise a real built module, not only mock lifecycle functions.
+
+Refresh-free lifecycle acceptance: exercise repeated swaps and rollbacks without a page reload; verify the per-slot active/candidate/retiring bound, closed-scope acquisition rejection, ignored late callbacks, and remaining-disposer execution after one fails. Inject a retirement failure and prove replacements pause rather than accumulate. Demonstrate dashboard-only recovery while chat and shell state remain intact, clean-state recovery when serialization fails, authorization rechecks on rollback, and bounded failed recovery with an explicit refresh option. Profile retained objects over repeated cycles; passing tracked-resource counts alone is not proof that third-party code is leak-free.
 
 Deferred deliberately: automatic backend code generation, write actions, full drag-and-drop reconstruction of arbitrary code, HMR infrastructure, and scheduled PDF delivery. Snapshot rendering will need a separate readiness/export contract and verification of bipp delivery compatibility. No timeline or production-readiness claim is implied by this document.
 
