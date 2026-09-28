@@ -12,7 +12,10 @@
 └───────────────────┬──────────────────────────┘
                     │  artifacts + manifests only
                     │  (no runtime data path)
-┌───────────────────▼──────────── customer network ─┐
+┌───────────────────▼── customer network / account ─┐
+│  (runtime operated by the customer, or by Nodex   │
+│   through a scoped role — it runs here either way)│
+│                                                   │
 │  host application ─── mints embed tokens          │
 │         │                                         │
 │  dashboard artifact ──▶ query runtime             │
@@ -31,9 +34,11 @@ query ever crosses it.**
 
 ## No public query API
 
-Customer-managed frontends query a customer-operated runtime, never Nodex cloud.
+Frontends query a runtime in the customer's own environment, never Nodex cloud.
 This is a deliberate product decision and it removes an entire class of exposure
-that would otherwise be the largest surface in the system.
+that would otherwise be the largest surface in the system. It survives the
+managed-hosting option intact, because managed means Nodex operates the runtime
+in the customer's account — not that queries come to us.
 
 Had exported dashboards been able to query Nodex cloud, we would need a public,
 internet-facing, multi-tenant query API: embed-token validation for every
@@ -44,16 +49,22 @@ internet. Every one of those is a place to get multi-tenant isolation wrong.
 None of it exists, because the data path never leaves the customer's network.
 
 The trade-off is honest and should be stated to customers: **every export format
-requires the customer to run the query runtime.** A customer who wants a single
-widget in an internal app must still deploy infrastructure. That is a real
-commercial constraint, and it is the price of the property above.
+requires a query runtime in the customer's own environment.** A customer who wants
+a single widget in an internal app still needs one. The managed plan removes the
+burden of operating it, not the requirement for it — there is no path where a
+dashboard queries Nodex cloud. That is a real commercial constraint, and it is
+the price of the property above.
 
 ## Credentials
 
-**Warehouse credentials never leave the customer's network (I8).** They are held
-by the query runtime and the modeling layer, both customer-operated. The control
-plane has no field for them, no code path that accepts them, and no ability to
-proxy a query.
+**Warehouse credentials never leave the customer's environment (I8).** They are
+held by the query runtime and the modeling layer, in the customer's own secret
+store. The control plane has no field for them, no code path that accepts them,
+and no ability to proxy a query. This holds on a Nodex-managed plan too: the
+runtime still runs in the customer's account, and the role Nodex holds there can
+deploy and restart the service but cannot read the warehouse or retrieve the
+credential values
+([Data plane](06-data-plane.md#where-it-runs-and-who-operates-it)).
 
 Studio's preview needs data, and gets it the same way everything else does:
 through the customer's own runtime, over a customer-configured development
@@ -114,6 +125,20 @@ control:
 - Framing controls (`X-Frame-Options` / CSP `frame-ancestors`) are set by the
   customer for their standalone and iframe deployments; we document the required
   configuration rather than guessing it.
+
+## Operational access on managed plans
+
+When Nodex operates a runtime in a customer's account, operational access is a
+trust surface even though no data custody changes hands. The controls are stated
+in [Data plane](06-data-plane.md#what-nodex-managed-means-concretely): a
+least-privilege role scoped to deploying and running the service, credentials
+held by reference rather than value, every action landing in the customer's own
+audit log, and revocation available to the customer at any time without stopping
+the runtime.
+
+The principle is that we operate the service without reading what passes through
+it. **O8 (OPEN)** covers the one place that principle bends — whether an operator
+may read query results or result-bearing logs while debugging an incident.
 
 ## Tenant isolation in the control plane
 

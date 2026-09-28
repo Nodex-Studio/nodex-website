@@ -9,13 +9,19 @@ control.
 | | Cadence | Controlled by | Version skew |
 |---|---|---|---|
 | **Control plane** (Studio, build) | Continuous | Nodex | None — one version live |
-| **Query runtime** (customer premises) | Customer-paced | Customer | Months to years |
+| **Query runtime** (customer's environment) | Customer-paced, or Nodex-paced when managed | Customer, or Nodex | Months to years self-operated; small when managed |
 | **Exported artifacts** (npm, CDN) | Pinned at install | Consuming developer | Indefinite |
 
-A realistic steady state: Studio is on this week's build, a customer's runtime is
-eleven months old, and a team inside that customer has a dashboard package pinned
-from before the runtime was last upgraded. All three must interoperate, and none
-of them can be forced.
+A realistic steady state: Studio is on this week's build, a self-operated runtime
+is eleven months old, and a team inside that customer has a dashboard package
+pinned from before the runtime was last upgraded. All three must interoperate,
+and none of them can be forced.
+
+Managed runtimes compress the middle row — Nodex upgrades them within an agreed
+window, so those customers stay close to current
+([Data plane](06-data-plane.md#where-it-runs-and-who-operates-it)). The long tail
+is a property of self-operation, not of the architecture. The compatibility rules
+below still have to assume it, because self-operation remains supported.
 
 Two consequences follow, and they are the spine of this document:
 

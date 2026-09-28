@@ -20,10 +20,13 @@ customer deploys them, and they query a runtime the customer also operates. **A
 customer-managed frontend never queries Nodex cloud** — see
 [08-security.md](08-security.md).
 
-Note that these are *delivery* modes. Where the query runtime lives is a separate
-question ([06-data-plane.md](06-data-plane.md)), and the two must not be
-conflated: a customer using the npm library and a customer using the iframe
-embed have identical data-plane requirements.
+Note that these are *delivery* modes, and they are independent of the data plane.
+Every one of them queries a runtime in the customer's own environment, which the
+customer may operate themselves or have Nodex operate for them
+([Data plane](06-data-plane.md#where-it-runs-and-who-operates-it)). A customer
+using the npm library and a customer using the iframe embed have identical
+data-plane requirements, and choosing a managed runtime changes nothing in this
+table.
 
 ## Runtime configuration
 

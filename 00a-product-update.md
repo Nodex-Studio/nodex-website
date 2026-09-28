@@ -50,10 +50,15 @@ this document is what makes that a description rather than a claim.
 becoming a second system of record: they ingest, extract, cache, and within a
 year the organization has a subtly different duplicate of its own numbers, and a
 new argument about which one is right. Nodex Studio is forbidden from doing this.
-Warehouse credentials never leave the customer's network (I8), queries run
+Warehouse credentials never leave the customer's environment (I8), queries run
 in-database with no extracts, and no data path crosses into Nodex cloud at all
 ([Security](08-security.md)). The data stays where the organization already
 governs it.
+
+This holds even when Nodex hosts. A managed plan means we deploy and operate the
+runtime inside the customer's own cloud account, not that queries come to us
+([Data plane](06-data-plane.md#where-it-runs-and-who-operates-it)). The claim is
+not a pricing tier, it is a property of the system.
 
 **It speaks the organization's own definitions.** Nodex Studio binds to the
 System of Record through the modeling layer, so it references metrics that were

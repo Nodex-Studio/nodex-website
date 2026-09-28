@@ -42,8 +42,10 @@ fire when a number crosses a threshold.
 
 **Deployment options.** Cloud by default, self-hosted on the customer's own
 servers, or embedded in their web application. The self-hosted path is the
-precedent for the customer-operated data plane
-([Data plane](06-data-plane.md)) — that model is proven here, not invented by us.
+precedent for our data plane ([Data plane](06-data-plane.md)) — that model is
+proven here, not invented by us. Nodex Studio narrows it deliberately: the
+runtime always sits in the customer's own environment, and the hosting choice is
+who operates it rather than where it runs.
 
 ## What Nodex Studio adds
 

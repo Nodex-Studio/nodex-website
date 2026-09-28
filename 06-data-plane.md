@@ -1,7 +1,61 @@
 # 06 — Data plane
 
-Everything in this document runs inside the customer's network. Nodex operates
-none of it, holds no warehouse credentials (**I8**), and never proxies a query.
+Everything in this document runs inside the customer's own environment. The
+control plane holds no warehouse credentials (**I8**) and never proxies a query.
+Nodex may *operate* the runtime on a managed plan, but it runs in the customer's
+account either way — see below.
+
+## Where it runs and who operates it
+
+Two independent questions. Conflating them is how a deployment conversation goes
+wrong, because one of them is fixed and the other is a choice.
+
+**Where it runs is not a choice.** The runtime sits in the customer's own network
+or cloud account, always. This is I8, and it is what lets the product claim it
+never holds the customer's data — a claim that would otherwise be
+untrue the moment we offered hosting
+([Product update](00a-product-update.md)).
+
+**Who operates it is a choice.**
+
+| | Self-operated | Nodex-managed |
+|---|---|---|
+| Runs in | Customer's network or cloud account | Customer's cloud account |
+| Deployed and upgraded by | The customer | Nodex, through a scoped role |
+| Credentials held by | The customer's secret store | The customer's secret store |
+| Upgrade pace | Customer's schedule | Nodex's, within an agreed window |
+| Suits | Airgapped, regulated, or infrastructure-confident customers | Customers who want the capability without running it |
+
+Because the runtime is a single versioned deployable executing inert manifests
+(I9, [ADR-0004](adr/0004-manifest-not-service.md)), who operates it is a
+deployment decision rather than an architectural one. Nothing about the manifest,
+the query protocol, or the artifact changes between these columns.
+
+### What Nodex-managed means concretely
+
+- Nodex holds a **scoped role in the customer's cloud account** — enough to
+  deploy, upgrade, monitor and restart the runtime. Not enough to read from the
+  warehouse.
+- **Warehouse credentials stay in the customer's own secret store.** Nodex
+  configures the runtime with a reference to them, never the value, and cannot
+  retrieve them through the role it holds.
+- **Every action is logged in the customer's own account**, in their audit trail
+  rather than one we show them.
+- **The role is revocable by the customer at any time**, which stops managed
+  operation and leaves the runtime in place, still running.
+
+The operating principle is that Nodex operates the service without reading the
+data passing through it. **O8 (OPEN)** is the honest exception: whether an
+operator may read query results or result-bearing logs while debugging a
+customer's incident. Convenient, occasionally the fastest path to a fix, and the
+one hole in the claim above. Decide it deliberately and write it into the
+contract rather than discovering it during an incident.
+
+### What it buys beyond convenience
+
+Managed customers stay close to current, which shrinks the version-skew problem
+that [Versioning](07-versioning.md) is largely about. The long tail of runtimes
+eleven months behind is a property of self-operation, not of the architecture.
 
 ## The central decision: manifest, not service
 
@@ -170,12 +224,12 @@ to one user, one dashboard, and a short expiry.
 
 ## Deployment and upgrade
 
-The runtime is a normal customer-operated service: deployed into their network,
-with access to their warehouse and their model repository, upgraded when they
-choose.
+The runtime is a normal service deployed into the customer's environment, with
+access to their warehouse and their model repository, upgraded when they choose —
+or, on a managed plan, when Nodex does within the agreed window.
 
-Because we cannot force an upgrade, the release process must assume a long tail
-of versions in production:
+For self-operated customers we cannot force an upgrade, so the release process
+must assume a long tail of versions in production:
 
 - Published version support window and deprecation policy
   ([07-versioning.md](07-versioning.md)).

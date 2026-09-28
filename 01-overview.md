@@ -18,7 +18,7 @@ dashboard as a real, deployable, importable artifact in six different shapes.
 | **Business user** | Explores. Poses a question in Studio, builds a chart, filters it, shares it by link. Their work is ephemeral and produces no package (I10), so they need no developer skills and can break nothing. |
 | **Consuming developer** | Also employed by the customer, but a different person and often a different team. Imports the exported package into an internal application and writes code against its public API by hand. Their code is not generated and not visible to us. |
 | **End user** | Views the dashboard, applies filters, drills in. Subject to row-level security. |
-| **Operator** | Runs the query runtime in the customer's environment, upgrades it, holds the warehouse credentials. |
+| **Operator** | Runs the query runtime, upgrades it, holds the warehouse credentials. Either the customer or Nodex on a managed plan — in both cases the runtime sits inside the customer's own environment (I8). |
 
 The consuming developer is the actor most easily forgotten and the one who
 constrains the design most, because they are the only party who writes
@@ -35,8 +35,11 @@ frontend artifact and the query manifest. Deterministic: same AST in, byte-ident
 public API out.
 
 **Data plane — the customer's environment.** The query runtime, the bipp data
-models, and the warehouse. Customer-operated, customer-paced. Warehouse
-credentials live here and only here.
+models, and the warehouse. It always runs in the customer's own network or cloud
+account; it may be operated by the customer, or by Nodex on a managed plan inside
+that same account. Warehouse credentials live here and only here (I8). Where it
+runs and who operates it are separate questions — see
+[Data plane](06-data-plane.md#where-it-runs-and-who-operates-it).
 
 The separation is what makes on-premise deployment a configuration rather than a
 product variant. It also means that a customer-managed dashboard never queries
@@ -76,8 +79,10 @@ tree.
 the auth token provider are injected at runtime. One artifact serves every
 deployment topology.
 
-**I8 — Warehouse credentials never leave the customer's network.** The control
-plane never holds them and never proxies a query.
+**I8 — Warehouse credentials never leave the customer's environment.** The
+runtime holds them and runs in the customer's own network or cloud account,
+whoever operates it. The control plane never holds them and never proxies a
+query.
 
 **I9 — One query runtime, many manifests.** Dashboards generate declarative
 manifests, not deployable services. There is exactly one executable to patch.
@@ -129,3 +134,4 @@ Deliberately unresolved. Each needs an owner before implementation starts.
 | O5 | Where the AST is stored for on-premise customers — Nodex cloud or the customer's own git. bipp already has git-based version control, which argues for theirs | [02-ast.md](02-ast.md) |
 | O6 | Who closes the content-governance gap — folders, certification, usage analytics, lineage. It degrades fastest under our usage pattern, not bipp's | [00b-platform.md](00b-platform.md) |
 | O7 | Whether the runtime pushes updates (SSE or WebSocket) or the client polls. Polling ships sooner; push is the only honest answer for a dashboard on a wall | [06-data-plane.md](06-data-plane.md) |
+| O8 | Whether a Nodex operator may read query results or result-bearing logs while debugging a managed runtime. Convenient, and the one hole in "we never see your data" | [08-security.md](08-security.md) |
