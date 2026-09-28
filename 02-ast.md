@@ -202,6 +202,6 @@ immutable and addressable, because exported packages pin to one.
 provides git-based version control for data models, which argues for storing
 dashboard ASTs in the customer's own git alongside them: it keeps authored
 artifacts under customer control, gives review and rollback for free, and fits
-their existing compliance story. The alternative — ASTs in bipp cloud — is
+their existing compliance story. The alternative — ASTs in Nodex cloud — is
 simpler to operate but puts authored IP in the control plane for customers whose
 entire reason for choosing on-premise was to avoid that.

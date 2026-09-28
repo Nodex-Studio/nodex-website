@@ -40,7 +40,7 @@ Derived directly from AST node ids and dashboard-level params (**I5**):
 // generated, deterministic
 declare global {
   interface HTMLElementTagNameMap {
-    'bipp-dashboard-sales': SalesDashboardElement;
+    'nodex-dashboard-sales': SalesDashboardElement;
   }
 }
 
@@ -82,12 +82,12 @@ deliberate, documented surface:
 - Everything else is internal and may change on any build.
 
 ```css
-bipp-dashboard-sales {
-  --bipp-font-family: Inter, system-ui, sans-serif;
-  --bipp-surface: #1b1c22;
-  --bipp-text: #e8e8ec;
-  --bipp-accent: #6c5ce7;
-  --bipp-grid-gap: 12px;
+nodex-dashboard-sales {
+  --nodex-font-family: Inter, system-ui, sans-serif;
+  --nodex-surface: #1b1c22;
+  --nodex-text: #e8e8ec;
+  --nodex-accent: #6c5ce7;
+  --nodex-grid-gap: 12px;
 }
 ```
 

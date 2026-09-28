@@ -16,6 +16,7 @@ DOMAIN = "nodex.studio"
 
 # (source file, section id, nav label, kind)
 DOCS = [
+    ("00-product-update.md", "product-update", "Product update",  "intro"),
     ("01-overview.md",     "overview",     "Overview",            "doc"),
     ("02-ast.md",          "ast",          "The AST",             "doc"),
     ("03-studio.md",       "studio",       "Studio",              "doc"),
@@ -209,7 +210,7 @@ def main():
         for o in opens
     )
     nav_html = ""
-    for group, title in (("doc", "Architecture"), ("adr", "Decisions")):
+    for group, title in (("intro", "Product"), ("doc", "Architecture"), ("adr", "Decisions")):
         items = [n for n in nav if n["kind"] == group]
         links = "".join(
             f'<li><a href="#{n["id"]}" data-nav="{n["id"]}">{n["label"]}</a>'

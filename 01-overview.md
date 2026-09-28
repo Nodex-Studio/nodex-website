@@ -13,7 +13,7 @@ dashboard as a real, deployable, importable artifact in six different shapes.
 
 | Actor | Role |
 |---|---|
-| **bipp** | Operates Studio and the build service. Publishes the query runtime. Does not operate the customer's data plane. |
+| **Nodex** | Operates Studio and the build service. Publishes the query runtime. Does not operate the customer's data plane. |
 | **Authoring developer** | Employed by the customer. Connects data sources, defines models, builds dashboards in Studio. Never edits generated code. |
 | **Consuming developer** | Also employed by the customer, but a different person and often a different team. Imports the exported package into an internal application and writes code against its public API by hand. Their code is not generated and not visible to us. |
 | **End user** | Views the dashboard, applies filters, drills in. Subject to row-level security. |
@@ -25,11 +25,11 @@ hand-maintained code against an interface that the platform regenerates.
 
 ## The three planes
 
-**Control plane — bipp cloud, multi-tenant.** Studio, the AST store, the prompt
-pipeline, the build service, the package registry. bipp operates this and ships
+**Control plane — Nodex cloud, multi-tenant.** Studio, the AST store, the prompt
+pipeline, the build service, the package registry. Nodex operates this and ships
 to it continuously.
 
-**Build plane — bipp cloud, per dashboard version.** Takes an AST and emits the
+**Build plane — Nodex cloud, per dashboard version.** Takes an AST and emits the
 frontend artifact and the query manifest. Deterministic: same AST in, byte-identical
 public API out.
 
@@ -39,7 +39,7 @@ credentials live here and only here.
 
 The separation is what makes on-premise deployment a configuration rather than a
 product variant. It also means that a customer-managed dashboard never queries
-bipp cloud — see [08-security.md](08-security.md).
+Nodex cloud — see [08-security.md](08-security.md).
 
 ![System context and trust boundaries](diagrams/system-context.png)
 
@@ -120,4 +120,4 @@ Deliberately unresolved. Each needs an owner before implementation starts.
 | O2 | Chart library — must render correctly inside a shadow root, which eliminates several candidates | [04-codegen.md](04-codegen.md) |
 | O3 | Is the custom-widget escape hatch in v1, or deferred? | [03-studio.md](03-studio.md) |
 | O4 | Query runtime packaging: container, Helm chart, or binary | [06-data-plane.md](06-data-plane.md) |
-| O5 | Where the AST is stored for on-premise customers — bipp cloud or the customer's own git. bipp already has git-based version control, which argues for theirs | [02-ast.md](02-ast.md) |
+| O5 | Where the AST is stored for on-premise customers — Nodex cloud or the customer's own git. bipp already has git-based version control, which argues for theirs | [02-ast.md](02-ast.md) |

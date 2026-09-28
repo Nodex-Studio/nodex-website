@@ -1,6 +1,6 @@
 # 06 — Data plane
 
-Everything in this document runs inside the customer's network. bipp operates
+Everything in this document runs inside the customer's network. Nodex operates
 none of it, holds no warehouse credentials (**I8**), and never proxies a query.
 
 ## The central decision: manifest, not service

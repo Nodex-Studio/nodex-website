@@ -3,7 +3,7 @@
 ## Trust boundaries
 
 ```
-┌─ bipp cloud (multi-tenant) ──────────────────┐
+┌─ Nodex cloud (multi-tenant) ──────────────────┐
 │  Studio · AST store · prompt pipeline        │
 │  build plane · package registry              │
 │  holds: ASTs, prompts, generated artifacts   │
@@ -31,11 +31,11 @@ query ever crosses it.**
 
 ## No public query API
 
-Customer-managed frontends query a customer-operated runtime, never bipp cloud.
+Customer-managed frontends query a customer-operated runtime, never Nodex cloud.
 This is a deliberate product decision and it removes an entire class of exposure
 that would otherwise be the largest surface in the system.
 
-Had exported dashboards been able to query bipp cloud, we would need a public,
+Had exported dashboards been able to query Nodex cloud, we would need a public,
 internet-facing, multi-tenant query API: embed-token validation for every
 customer, per-tenant CORS origin allowlists, per-tenant rate limiting and query
 cost caps, and cross-tenant isolation on a path reachable from any browser on the

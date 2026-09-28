@@ -15,7 +15,7 @@ The **AST is the dashboard**. Generated code, packages, bundles, and query
 manifests are derived artifacts, reproducible from the AST and discardable at any
 time.
 
-Generated code is never hand-edited — not by bipp, not by the customer. Anything
+Generated code is never hand-edited — not by Nodex, not by the customer. Anything
 a user needs to change is changed in the AST, through Studio.
 
 ## Consequences

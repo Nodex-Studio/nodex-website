@@ -8,7 +8,7 @@ control.
 
 | | Cadence | Controlled by | Version skew |
 |---|---|---|---|
-| **Control plane** (Studio, build) | Continuous | bipp | None — one version live |
+| **Control plane** (Studio, build) | Continuous | Nodex | None — one version live |
 | **Query runtime** (customer premises) | Customer-paced | Customer | Months to years |
 | **Exported artifacts** (npm, CDN) | Pinned at install | Consuming developer | Indefinite |
 
@@ -54,7 +54,7 @@ developer, in Studio, at the moment they make the change — with a plain statem
 of what breaks:
 
 > Renaming this parameter is a breaking change for 3 applications importing
-> `@bipp/dashboard-sales`. They will need a code change to upgrade.
+> `@nodex/dashboard-sales`. They will need a code change to upgrade.
 
 That message is the entire point of the machinery. Without it, an authoring
 developer has no way to know that a rename in a visual tool is an API break in

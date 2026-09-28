@@ -8,16 +8,16 @@ a separate pipeline.
 
 | Mode | Operated by | What ships |
 |---|---|---|
-| Standalone, bipp-hosted | **bipp** | App shell + core bundle, served from bipp cloud |
+| Standalone, Nodex-hosted | **Nodex** | App shell + core bundle, served from Nodex cloud |
 | Standalone, self-hosted | Customer | Same artifact, customer's infrastructure |
 | iframe embed | Customer | App shell + a `postMessage` API |
 | Web component | Customer | The core bundle, unchanged |
 | CDN | Customer | ESM at immutable versioned URLs, with SRI |
 | npm library | Customer | Package with framework wrappers and types |
 
-Only the first is operated by bipp. The other five are customer-managed: the
+Only the first is operated by Nodex. The other five are customer-managed: the
 customer deploys them, and they query a runtime the customer also operates. **A
-customer-managed frontend never queries bipp cloud** — see
+customer-managed frontend never queries Nodex cloud** — see
 [08-security.md](08-security.md).
 
 Note that these are *delivery* modes. Where the query runtime lives is a separate
@@ -31,7 +31,7 @@ embed have identical data-plane requirements.
 initialisation:
 
 ```js
-import { mount } from '@bipp/dashboard-sales';
+import { mount } from '@nodex/dashboard-sales';
 
 mount(document.querySelector('#dash'), {
   endpoint: 'https://analytics.acme.internal/q',   // customer's runtime
@@ -49,7 +49,7 @@ be promoted from staging to production without a rebuild.
 
 ```json
 {
-  "name": "@bipp/dashboard-sales",
+  "name": "@nodex/dashboard-sales",
   "version": "2.4.0",
   "type": "module",
   "sideEffects": false,
@@ -64,7 +64,7 @@ be promoted from staging to production without a rebuild.
     "./styles.css": "./dist/styles.css"
   },
   "peerDependencies": {
-    "@bipp/runtime": "^2.0.0",
+    "@nodex/runtime": "^2.0.0",
     "react": ">=17", "react-dom": ">=17",
     "vue": ">=3", "svelte": ">=4"
   },
@@ -105,7 +105,7 @@ export const SalesDashboard = forwardRef<SalesDashboardElement, Props>((props, r
     return () => node.removeEventListener('widget-click', h);
   }, [props.onWidgetClick]);
 
-  return <bipp-dashboard-sales ref={el} />;
+  return <nodex-dashboard-sales ref={el} />;
 });
 ```
 
@@ -119,7 +119,7 @@ These produce support tickets rather than design debates, and each needs an
 explicit mitigation in the generated package.
 
 **Tag name collisions.** A company with several internal dashboards will end up
-with two versions of `@bipp/runtime` on one page, and the second
+with two versions of `@nodex/runtime` on one page, and the second
 `customElements.define()` throws *"already defined"*, taking down the host
 application. Mitigations: a define-guard that no-ops on redefinition rather than
 throwing, version-scoped tag names for shared runtime elements, and a dev-mode
@@ -127,7 +127,7 @@ warning naming both versions.
 
 **Duplicate runtimes.** Related but distinct: even without a collision, ten
 dashboard packages each bundling the runtime ship ten copies. Externalise it as
-`@bipp/runtime` and declare it a peer dependency, so the consumer's package
+`@nodex/runtime` and declare it a peer dependency, so the consumer's package
 manager deduplicates. <a id="shared-runtime"></a>
 
 **Peer dependencies.** React, Vue, and Svelte must be peers, never dependencies.
