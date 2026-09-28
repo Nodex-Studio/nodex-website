@@ -1,74 +1,25 @@
-<!doctype html>
-<html lang="en" data-theme="light">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title><!--TITLE--></title>
-<meta name="description" content="<!--DESCRIPTION-->">
-<meta name="color-scheme" content="light dark">
-<meta property="og:title" content="<!--TITLE-->">
-<meta property="og:description" content="<!--DESCRIPTION-->">
-<meta property="og:type" content="article">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230e5c6b'/><path d='M8 22V10h5a3.2 3.2 0 010 6.4H8m9 5.6V10' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>">
 <style>/*STYLES*/</style>
-</head>
-<body class="page-<!--LABEL-->">
-
-<header class="topbar">
-  <button class="icon-btn" id="nav-toggle" type="button" aria-expanded="false" aria-label="Toggle contents">···</button>
-  <a class="brand" href="#top"><b>Nodex Studio</b> <span>/ <!--LABEL--></span></a>
-  <div class="topbar-spacer"></div>
-  <div class="search-wrap">
-    <input id="search" type="search" placeholder="Search  /" autocomplete="off" aria-label="Search the document">
-    <div id="results" role="listbox" aria-label="Search results"></div>
+<div id="studio-document" aria-label="Dashboard studio product and architecture proposal">
+  <header class="document-bar">
+    <a class="wordmark" href="#studio-top">Nodex<span> / Studio</span></a>
+    <div class="document-status"><span class="status-dot" aria-hidden="true"></span>Product direction · Draft</div>
+  </header>
+  <div class="document-layout">
+    <nav class="document-nav" aria-label="Document contents">
+      <p class="nav-label">Nodex using bipp</p>
+      <!--NAV-->
+      <div class="nav-note">bipp’s foundation.<br>Nodex’s proposed experience.</div>
+    </nav>
+    <main id="studio-top">
+      <header class="document-hero">
+        <p class="eyebrow">Product &amp; architecture / September 2026</p>
+        <h1>Build dashboards<br>through conversation<span>.</span></h1>
+        <p class="hero-description">A conversational dashboard studio built on bipp’s analytics foundation, available inside a customer’s product or as an independent application.</p>
+        <div class="hero-meta"><span>Nodex using bipp · Proposed product</span><span><!--WORD_COUNT--> words · <!--READ_TIME--> min read</span></div>
+      </header>
+      <!--SECTIONS-->
+      <footer class="document-footer"><span>Nodex Studio</span><span>Working proposal · 29 September 2026</span></footer>
+    </main>
   </div>
-  <button class="icon-btn" id="theme-toggle" type="button">Dark</button>
-  <div class="progress" id="progress"></div>
-</header>
-
-<div class="shell">
-
-  <nav class="rail" aria-label="Contents"><!--NAV--></nav>
-
-  <main id="top">
-
-    <div class="masthead">
-      <h1><!--TITLE--></h1>
-      <p class="sub"><!--SUBTITLE--></p>
-      <div class="meta">
-        <span><b>Status</b> Draft</span>
-        <span><b>Revised</b> 28 September 2026</span>
-        <!--META-->
-      </div>
-    </div>
-
-    <!--SECTIONS-->
-
-    <footer class="doc-footer">
-      <span>Nodex Studio</span>
-      <span>Draft, 28 September 2026</span>
-      <span><!--OTHER--></span>
-    </footer>
-
-  </main>
-
-  <aside class="outline" aria-label="On this page">
-    <p>On this page</p>
-    <ul id="outline-list"></ul>
-  </aside>
-
 </div>
-
-<div id="ident-pop" role="tooltip" hidden></div>
-
-<div id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Diagram, full screen">
-  <button class="lb-close" type="button">Close  Esc</button>
-  <div class="lb-inner"></div>
-</div>
-
 <script>/*SCRIPT*/</script>
-</body>
-</html>

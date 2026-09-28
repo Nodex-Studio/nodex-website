@@ -1,37 +1,27 @@
-# Proposal and technical appendix
+# Studio product document
 
-The Markdown files in architecture/ are the source of truth.
+The only content input is ../00-executive-summary.md. Earlier specifications
+and ADRs are not read or linked by the build.
 
-## Build
+## Build and preview
 
-Run `python3 html/build.py` with the Python `markdown` package installed.
-The build emits two self-contained pages in `html/dist/`:
+Run python3 html/build.py with Python Markdown installed. The build writes a
+self-contained html/dist/index.html with inline styles and interaction code.
+It does not deploy or contact an external service.
 
-- `index.html`: the founder proposal from `00-executive-summary.md`.
-- `technical.html`: supporting context, architecture specifications and ADRs.
+To also generate a built-in visualization fragment, pass an absolute destination
+with --preview /absolute/task-owned/path/dashboard-studio.html.
 
-The output also contains CNAME and .nojekyll for GitHub Pages. CSS, JavaScript and
-referenced SVG diagrams are inlined. No network access is needed to build.
+template.html is a fragment shared by both presentations. The interactive
+architecture describes layer responsibilities, and document navigation
+highlights the current section. The build verifies identifiers and local links.
 
-## Preview
+The generated technical.html contains only a redirect to the new document,
+so the old architecture does not remain available through the previous route
+in a future publication. Historical source files are preserved outside the build.
 
-Run `python3 -m http.server 8811 --directory html/dist`.
+## Deployment status
 
-## Build behavior
-
-The DOCS list controls document ordering and navigation. The proposal is kept on
-its own page; engineering details stay in the appendix. Links between Markdown
-sources become links to the correct HTML page and heading. The build validates
-local pages and anchors across both outputs, failing on unresolved links.
-
-Invariant and open-decision chips derive their content from the overview.
-The appendix's accepted-decision count is parsed from ADR status fields;
-an open ADR is not counted as accepted.
-
-The proposal's diagram summarizes authoring, publishing, execution and site
-reuse. Detailed engineering diagrams appear only in the appendix.
-
-## Deployment
-
-.github/workflows/deploy.yml builds and verifies both pages on pushes to main,
-then publishes html/dist/ to GitHub Pages at nodex.studio.
+The user authorized publication of the consolidated revision on 29 September
+2026. The existing Pages workflow publishes changes pushed to main; the local
+build and preview commands do not invoke that workflow.

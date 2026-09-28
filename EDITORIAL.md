@@ -1,24 +1,31 @@
 # Editorial direction
 
-Audience: bipp's founder. This is a forward-looking product proposal about
-revitalizing the customer experience through Nodex Studio.
+The current product is a SaaS dashboard-building studio. Customers can embed the
+studio itself in their applications or use an independently deployed application.
+AI chat guides dashboard creation and iterative editing inside the studio.
 
-- Lead with a concrete customer workflow and the opportunity for bipp.
-- Keep the primary reading path around 600–900 words, with one high-level
-  architecture diagram and a specific pilot and discussion request.
-- Explain architecture through customer problems, outcomes and material
-  tradeoffs. Preserve the structured definition, controlled publishing,
-  versioned component interfaces, shared customer-side runtime and site bindings.
-- Keep implementation schemas, protocols, library choices, package details,
-  exhaustive invariants and ADRs in a separately linked technical appendix.
-- Remove generic BI education, maturity ladders, competitor rhetoric, sales
-  coaching and repeated explanations.
-- Recognize bipp's existing capabilities. Cite public claims; treat unknown
-  capabilities and integration details as questions rather than asserted gaps.
-- Distinguish the proposed design from verified implementation. Expected
-  benefits are hypotheses to evaluate in the pilot.
-- Use confident, collaborative language. Avoid describing bipp as stale in
-  customer-facing copy. Product placement and implementation ownership are
-  decisions to make together.
+- Start from the business question and the experience of building a dashboard.
+- Explain product, architecture, and benefits in business terms.
+- Treat arbitrary dashboards as an extensibility ambition, not a promise of
+  unlimited capability or guaranteed AI correctness.
+- Recommend a shared editable dashboard definition, governed data access, and
+  an extension path; describe these as proposals to validate.
+- Distinguish embedding the interface from hosting its backend services.
+- Reuse bipp capabilities where validated; do not invent platform gaps or claim
+  that integrations have already been implemented.
+- Keep the founder's reading path concise, specific, and free of schemas,
+  package formats, implementation protocols, and exhaustive design decisions.
+- Do not inherit the old requirement to compile and distribute dashboards as
+  separate components, query manifests, or site-bound packages.
+- Do not include the superseded technical appendix in the current HTML.
+- The user authorized consolidation and deployment on 29 September 2026.
+- Position bipp as the existing analytics foundation, not a hypothetical vendor.
+  Distinguish demonstrated workflows, published capabilities, and unverified APIs.
+- Reuse its modeling, SQL generation, dashboards, access controls, and delivery
+  where interfaces permit. Inspect bippDash and custom visualizations first.
+- Keep conversational authoring separate from greater rendering freedom.
+- Distinguish model development and release from dashboard editing. Preserve
+  snapshot compatibility for new visuals and existing scheduled delivery.
 
-This file is editing guidance and is not included in the published site.
+The active content is 00-executive-summary.md. Earlier numbered specifications,
+ADRs, and diagrams are historical working material and are excluded from the build.
