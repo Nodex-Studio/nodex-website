@@ -215,6 +215,7 @@
     if (e.key === "Escape") {
       if (!lb.hidden) { lb.hidden = true; return; }
       if (!pop.hidden) { closePop(); return; }
+      if (document.body.classList.contains("nav-open")) { setNav(false); return; }
       if (document.activeElement === box) { box.value = ""; run(""); box.blur(); }
       results.innerHTML = "";
     }

@@ -393,13 +393,30 @@ td code { font-size: .8rem; }
   .search-wrap { flex: 1 1 auto; min-width: 0; }
   #search { width: 100%; }
   .shell { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 1.25rem; }
+  /* The rail is the first thing in the document, so a static panel opens
+     wherever the page starts -- far above the reader once they have scrolled.
+     On a phone it is an overlay anchored to the viewport instead. */
   .rail {
-    position: static; max-height: none; overflow: visible;
-    padding: 1.25rem 0; border-bottom: 1px solid var(--rule);
+    display: none;
+    position: fixed;
+    top: 3.5rem; left: 0; right: 0; bottom: 0;
+    z-index: 55;
+    max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 1.15rem 1.25rem 3rem;
+    background: var(--paper);
+    border-top: 1px solid var(--rule);
+    border-bottom: 0;
   }
-  .rail { display: none; }
   body.nav-open .rail { display: block; }
+  body.nav-open { overflow: hidden; }
   #nav-toggle { display: grid !important; }
+  #nav-toggle[aria-expanded="true"] {
+    color: var(--signal); border-color: var(--signal);
+  }
+  .rail a { padding-top: .42rem; padding-bottom: .42rem; }
   #results { width: min(26rem, calc(100vw - 1.7rem)); right: -2.6rem; }
   main { padding-top: 1.75rem; }
   body { font-size: 16px; }
