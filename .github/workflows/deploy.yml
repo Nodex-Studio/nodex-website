@@ -40,15 +40,20 @@ jobs:
 
       - name: Verify the build
         run: |
-          f=html/dist/index.html
+          proposal=html/dist/index.html
+          test -s "$proposal" || { echo "::error::proposal missing"; exit 1; }
+          grep -q 'id="executive-summary--prove-it-with-one-pilot"' "$proposal" || { echo "::error::pilot missing"; exit 1; }
+          grep -q 'technical.html#overview' "$proposal" || { echo "::error::appendix link missing"; exit 1; }
+          ! grep -q '<pre>' "$proposal" || { echo "::error::code examples in proposal"; exit 1; }
+          f=html/dist/technical.html
           test -s "$f" || { echo "::error::build produced no output"; exit 1; }
           # Guard the things that have actually broken before.
           grep -q 'id="overview"'  "$f" || { echo "::error::sections missing"; exit 1; }
           grep -q 'class="ident'   "$f" || { echo "::error::invariant chips missing"; exit 1; }
           test "$(grep -c '<svg' "$f")" -ge 5 || { echo "::error::diagrams missing"; exit 1; }
           ! grep -q 'md</a>'       "$f" || { echo "::error::raw filename link text leaked"; exit 1; }
-          # Every link in a single-page document must be an in-page anchor or external.
-          if grep -oE 'href="[^"#][^"]*"' "$f" | grep -vE 'href="(https?:|mailto:|data:)' | head -5 | grep .; then
+          # The build validates anchors on both pages; allow their cross-page links.
+          if grep -oE 'href="[^"#][^"]*"' "$f" | grep -vE 'href="(https?:|mailto:|data:|index.html|technical.html)' | head -5 | grep .; then
             echo "::error::relative link(s) in a single-page document"; exit 1
           fi
           ! grep -q '&lt;br'       "$f" || { echo "::error::literal br tags in diagram labels"; exit 1; }

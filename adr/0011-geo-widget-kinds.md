@@ -4,14 +4,13 @@
 
 ## Context
 
-Two of the highest-profile dashboards built on the platform to date were maps: a
-shipment tracker showing origin, destination, route, ETA and live temperature, and
-a vaccine distribution map. Both were hand-built in JavaScript, because the schema
-had no map node type.
+bipp already publishes map support and a customer example of vaccine shipment
+tracking. The proposal needs to represent such experiences in its own authoring
+schema. This decision concerns that representation and does not claim that bipp
+lacks maps or requires every map to be custom-built.
 
-They were also the strongest argument for an escape hatch. They are in fact the
-strongest argument against one ([ADR-0008](0008-no-escape-hatch.md)): the demand
-was for one missing widget kind, not for arbitrary code.
+Sources: [bipp visualizations](https://www.bipp.io/features/data-visualization/)
+and [healthcare case study](https://www.bipp.io/casestudies/fortune50-healthcare-company-reduces-its-cost-with-boost-in-business-intelligence-performance).
 
 ## Decision
 

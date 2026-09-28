@@ -25,7 +25,7 @@ window, so those customers stay close to current
 is a property of self-operation, not of the architecture. The compatibility rules
 below still have to assume it, because self-operation remains supported.
 
-Two consequences follow, and they are the spine of this document:
+Three consequences follow:
 
 - **The AST schema and the query protocol are long-lived public contracts**, not
   internal formats. They are versioned explicitly and negotiated at runtime.
@@ -35,7 +35,7 @@ Two consequences follow, and they are the spine of this document:
   precisely so that the estate can grow without touching any of the other three
   (**I12**) — see [Binding sets](#binding-sets).
 
-![Three release cadences](diagrams/version-cadences.png)
+![Studio, runtime and artifact release cadences; bindings evolve independently](diagrams/version-cadences.png)
 
 ## Mechanical semver
 

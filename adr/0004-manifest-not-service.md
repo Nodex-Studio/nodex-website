@@ -28,11 +28,10 @@ customer, serving all of their dashboards.
 - **One executable to patch.** A vulnerability in the query path is fixed by one
   runtime release, and each customer upgrades one component to fix every
   dashboard they own.
-- **Generated artifacts are not patch targets.** They contain no code and no
-  credentials.
-- **The manifest cannot express arbitrary SQL**, so it cannot express a wrong
-  join, a fan-out, or an unbounded scan. It can only reference metrics already
-  defined and reviewed in the modeling layer.
+- **Manifests contain no executable code or credentials.** Frontend bundles
+  remain executable software with their own update requirements.
+- **The manifest references reviewed models rather than arbitrary SQL.** Model
+  correctness and runtime query-cost and fan-out limits are still required.
 - **A compromised client cannot widen access** — it can only request queries the
   manifest already declares ([08-security.md](../08-security.md)).
 - Operationally boring: one service to document, monitor, support, and version.

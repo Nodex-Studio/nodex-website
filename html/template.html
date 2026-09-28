@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nodex Studio Spec</title>
-<meta name="description" content="The specification for Nodex Studio: the intelligence layer over a customer's system of record. How a dashboard is authored, compiled, distributed six ways, and run inside the customer's own environment.">
+<title><!--TITLE--></title>
+<meta name="description" content="<!--DESCRIPTION-->">
 <meta name="color-scheme" content="light dark">
-<meta property="og:title" content="Nodex Studio Spec">
-<meta property="og:description" content="The intelligence layer over a customer's system of record. <!--INVCOUNT_CAP--> invariants, <!--ADRCOUNT--> settled decisions, <!--OPENCOUNT_LOWER--> open questions.">
+<meta property="og:title" content="<!--TITLE-->">
+<meta property="og:description" content="<!--DESCRIPTION-->">
 <meta property="og:type" content="article">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,11 +15,11 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230e5c6b'/><path d='M8 22V10h5a3.2 3.2 0 010 6.4H8m9 5.6V10' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>">
 <style>/*STYLES*/</style>
 </head>
-<body>
+<body class="page-<!--LABEL-->">
 
 <header class="topbar">
   <button class="icon-btn" id="nav-toggle" type="button" aria-expanded="false" aria-label="Toggle contents">···</button>
-  <a class="brand" href="#top"><b>Nodex Studio</b> <span>/ spec</span></a>
+  <a class="brand" href="#top"><b>Nodex Studio</b> <span>/ <!--LABEL--></span></a>
   <div class="topbar-spacer"></div>
   <div class="search-wrap">
     <input id="search" type="search" placeholder="Search  /" autocomplete="off" aria-label="Search the document">
@@ -36,35 +36,21 @@
   <main id="top">
 
     <div class="masthead">
-      <h1>Nodex Studio Spec</h1>
-      <p class="sub">The intelligence layer over a customer's existing system of record: how a dashboard is authored, compiled, distributed six ways, and run inside the customer's own environment &mdash; whether they operate it or we do.</p>
+      <h1><!--TITLE--></h1>
+      <p class="sub"><!--SUBTITLE--></p>
       <div class="meta">
         <span><b>Status</b> Draft</span>
         <span><b>Revised</b> 28 September 2026</span>
-        <span><b>Decisions</b> <!--ADRCOUNT_NUM--> settled, <!--OPENCOUNT_NUM--> open</span>
+        <!--META-->
       </div>
     </div>
-
-    <!--SUMMARY-->
-
-    <section class="hero">
-      <h2>The system holds <!--INVCOUNT--> invariants</h2>
-      <p>Everything in this document is a consequence of these. Where a design appears to contradict one, the invariant wins and the design is wrong. They are referenced by number throughout — hover any reference to see the rule.</p>
-      <ul class="inv-list"><!--HERO--></ul>
-    </section>
-
-    <section class="open-block">
-      <h2><!--OPENCOUNT--> questions are deliberately unresolved</h2>
-      <p>Each needs an owner before implementation starts. None of them blocks the others.</p>
-      <ul class="inv-list"><!--OPEN--></ul>
-    </section>
 
     <!--SECTIONS-->
 
     <footer class="doc-footer">
       <span>Nodex Studio</span>
       <span>Draft, 28 September 2026</span>
-      <span>Built from the markdown sources in <code>architecture/</code></span>
+      <span><!--OTHER--></span>
     </footer>
 
   </main>

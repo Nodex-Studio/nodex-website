@@ -1,6 +1,13 @@
 /* bipps architecture — living document */
 (function () {
   "use strict";
+  // Preserve bookmarks from the previous single-page specification.
+  var appendixIds = /*APPENDIX_IDS*/;
+  if (document.body.classList.contains("page-proposal") &&
+      appendixIds.indexOf(location.hash.slice(1).split("--")[0]) !== -1) {
+    location.replace("technical.html" + location.hash);
+    return;
+  }
   var IDENTS = /*IDENTS*/;
   var $  = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
@@ -48,7 +55,7 @@
 
   var activeSection = null;
   function markActive() {
-    var y = window.scrollY + 140, cur = sections[0], i;
+    var y = window.scrollY + 180, cur = sections[0], i;
     for (i = 0; i < sections.length; i++) if (sections[i].offsetTop <= y) cur = sections[i];
     if (cur !== activeSection) {
       activeSection = cur;
@@ -60,6 +67,11 @@
     }
     var heads = $$("h2[id]", cur), curH = null;
     for (i = 0; i < heads.length; i++) if (heads[i].offsetTop <= y) curH = heads[i];
+    if (document.body.classList.contains("page-proposal")) {
+      $$(".rail a[data-nav]").forEach(function (a) {
+        a.classList.toggle("active", !!curH && a.getAttribute("data-nav") === curH.id);
+      });
+    }
     $$("#outline-list a").forEach(function (a) {
       a.classList.toggle("active", !!curH && a.getAttribute("data-out") === curH.id);
     });

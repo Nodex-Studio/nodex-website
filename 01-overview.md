@@ -2,14 +2,11 @@
 
 ## Purpose
 
-The platform lets a developer at a customer company build internal dashboards by
-describing them, then take the result away and run it themselves. It sits on top
-of bipp's existing analytics stack — the data modeling layer, its SQL generation,
-its warehouse connectors, and its row-level security — and adds three things those
-don't have: a prompt-driven authoring surface, a build system that emits the
-dashboard as a real, deployable, importable artifact in six different shapes, and
-a way to bind one dashboard definition across a large estate of sites without
-copying it.
+This working design supports the [founder proposal](00-executive-summary.md).
+It proposes prompt and visual authoring, versioned component publishing and
+site bindings on top of bipp's analytics stack. The following contracts describe
+intended behavior. Reuse of bippDash, the SDK and existing services must be
+validated before implementation ownership or missing capabilities are assumed.
 
 ## Actors
 
@@ -178,11 +175,11 @@ Deliberately unresolved. Each needs an owner before implementation starts.
 | O2 | Chart library — must render correctly inside a shadow root, which eliminates several candidates | [04-codegen.md](04-codegen.md) |
 | O4 | Query runtime packaging: container, Helm chart, or binary | [06-data-plane.md](06-data-plane.md) |
 | O5 | Where the AST is stored for on-premise customers — Nodex cloud or the customer's own git. bipp already has git-based version control, which argues for theirs | [02-ast.md](02-ast.md) |
-| O6 | Who closes the content-governance gap — folders, certification, usage analytics, lineage. It degrades fastest under our usage pattern, not bipp's | [00b-platform.md](00b-platform.md) |
+| O6 | How existing content governance, usage reporting and lineage apply to generated dashboards, and who owns any integration work | [00b-platform.md](00b-platform.md) |
 | O7 | Whether the runtime pushes updates (SSE or WebSocket) or the client polls. Polling ships sooner; push is the only honest answer for a dashboard on a wall | [06-data-plane.md](06-data-plane.md) |
 | O8 | Whether a Nodex operator may read query results or result-bearing logs while debugging a managed runtime. Convenient, and the one hole in "we never see your data" | [08-security.md](08-security.md) |
 | O9 | Default fan-out cap for a repeater, and whether a grouped query is always mandatory or merely preferred | [06-data-plane.md](06-data-plane.md) |
-| O10 | Who owns **model interfaces** — the declared shape a site's data conforms to. Binding validation is guesswork without them, and the modeling layer is bipp's. O6-shaped | [00b-platform.md](00b-platform.md) |
+| O10 | How existing models expose the declared shapes needed for site bindings, whether extensions are required, and who owns that integration | [00b-platform.md](00b-platform.md) |
 | O11 | Which identity a scheduled monitor runs as: the recipient's row-level security, the author's, or a declared service principal. There is no obvious default and it is a contract question, not a code one | [08-security.md](08-security.md) |
 | O12 | Whether the annotation store is embedded in the runtime or a customer-provided database. Embedded is one less thing to operate; external is the only answer for a customer who wants annotations in their own backup and retention regime | [06-data-plane.md](06-data-plane.md) |
 | O13 | How cross-dashboard link targets resolve across semver — by id plus a version range, or pinned | [07-versioning.md](07-versioning.md) |

@@ -50,17 +50,13 @@ Three mechanisms absorb the tail, in the order they should be reached for:
    handles the resulting skew. This is the honest home for the long tail: a
    platform release, never a per-customer artifact.
 
-## The evidence that this is sufficient
+## Coverage to validate
 
-The strongest case for a hatch was that flagship deliverables need custom
-visuals. In the engagements that motivated it, those visuals were **maps** — a
-shipment tracker and a vaccine distribution map — hand-built in JavaScript
-because no map widget kind existed. One absent node type, delivered twice as
-code.
-
-A map is fully expressible in a closed schema
-([ADR-0011](0011-geo-widget-kinds.md)). This is the pattern to expect: what looks
-like a demand for arbitrary code is usually a demand for one missing widget kind.
+Existing bipp map and custom-visualization use cases should be checked against
+the proposed schema. A bounded map widget is one candidate representation
+([ADR-0011](0011-geo-widget-kinds.md)); it does not establish that a closed schema
+covers every customer need. The pilot must identify unsupported requirements and
+the work needed to add them as supported capabilities.
 
 ## Consequences
 

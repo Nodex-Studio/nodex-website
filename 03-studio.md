@@ -142,9 +142,9 @@ they are not two products. An exploration that turns out to matter is **promoted
 rather than rebuilt: it gains stable node ids, a version, and a manifest, and
 becomes a published dashboard with the same content it already had.
 
-This is what makes the level 5 claim in
-[Product update](00a-product-update.md) true without putting the API contract at
-risk. A business user can pose a new question, chart it, filter it and share it
+This supports the self-service workflow in the
+[proposal](00-executive-summary.md) while protecting the API contract.
+A business user can pose a new question, chart it, filter it and share it
 without a data team in the loop, because nothing they make carries a version
 that someone else's code depends on. The moment something does carry that
 contract, publishing it is a developer's decision and passes the semver gate
@@ -157,8 +157,8 @@ is as open as read access to the models allows.
 
 The preview in Studio is the real artifact, not an approximation: the same
 components, the same rendering path, the same runtime. It differs only in where
-it gets data — Studio's preview queries through the control plane's
-development connection to the customer's runtime, with the authoring
+it gets data — Studio's preview in the author's browser queries the customer's
+runtime directly, with the authoring
 developer's own identity and row-level security applied.
 
 Because prompts have latency and direct manipulation does not, the preview must

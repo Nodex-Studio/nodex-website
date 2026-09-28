@@ -228,6 +228,13 @@ main > * { max-width: var(--measure); }
 .open-block .inv-rule { font-size: .97rem; }
 
 /* ---------------------------------------------------- prose */
+.page-proposal .shell { grid-template-columns: 230px minmax(0, 1fr); max-width: 1160px; }
+.page-proposal .outline { display: none; }
+.page-proposal .masthead { margin-bottom: 2rem; }
+.page-proposal .doc-proposal { padding-top: 0; }
+.page-proposal .doc-proposal > .doc-title { display: none; }
+.page-proposal .doc-proposal > h2:first-of-type + h2 { margin-top: 0; }
+.page-link a, .doc-footer a { color: var(--signal); text-decoration: none; }
 .doc { padding-top: 4.5rem; max-width: none; }
 .doc > * { max-width: var(--measure); }
 .doc-title {
@@ -388,6 +395,7 @@ td code { font-size: .8rem; }
   .outline { display: none; }
 }
 @media (max-width: 900px) {
+  .page-proposal .shell { grid-template-columns: minmax(0, 1fr); }
   .topbar { gap: .6rem; padding: 0 .85rem; }
   .brand span { display: none; }
   .search-wrap { flex: 1 1 auto; min-width: 0; }

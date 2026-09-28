@@ -94,8 +94,8 @@ own, to a version list we do not have. That is not a patchable system.
 
 With a manifest: the security fix is one runtime release, the customer upgrades
 one component, and every dashboard they own is fixed at once. The generated
-artifact contains no executable code and no credentials, so it is not a patch
-target at all.
+manifest contains no executable code or credentials. Frontend bundles still
+need their own dependency and security updates.
 
 **The manifest is a template, not a resolved plan.** Two things it deliberately
 leaves unresolved — which models a site's data lives in (I12) and how many copies
@@ -162,10 +162,10 @@ SQL is the modeling layer's job, and it is pre-existing bipp functionality —
 models, joins, metric definitions, and row-level security are already declared
 there, under the customer's own git version control.
 
-This is the reason this design is materially safer than prompt-to-SQL: the
-generated layer never expresses arbitrary SQL, so it cannot express a wrong join,
-a fan-out, or an unbounded scan. It can only reference metrics someone already
-defined and reviewed.
+The generated layer references reviewed model entities rather than expressing
+arbitrary SQL. Correctness still depends on those model definitions; authorized
+queries can still be expensive. The runtime must enforce query-cost and fan-out
+limits independently of schema validation.
 
 It also means **business logic never ships to a client.** A dashboard running
 inside a customer's own web application, served from a CDN, or imported into an

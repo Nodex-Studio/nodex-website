@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 600" role="img" aria-label="Studio authors a shared dashboard definition and publishes a component and query manifest. Customer applications query a shared runtime through bipp models and access controls to the warehouse. Site configurations feed the runtime.">
+  <rect width="720" height="600" rx="12" fill="#ffffff"/>
+  <g font-family="Arial, sans-serif" fill="#151a23">
+    <rect x="24" y="22" width="672" height="186" rx="12" fill="#e2f0f2" stroke="#0e5c6b"/>
+    <text x="46" y="52" font-size="15" font-weight="700" fill="#0e5c6b">STUDIO CLOUD · AUTHOR &amp; PUBLISH</text>
+    <text x="360" y="90" font-size="23" font-weight="700" text-anchor="middle">Describe → Refine → Publish</text>
+    <text x="360" y="121" font-size="17" text-anchor="middle">One shared dashboard definition</text>
+    <rect x="140" y="143" width="440" height="43" rx="7" fill="#ffffff"/>
+    <text x="360" y="170" font-size="17" text-anchor="middle">Versioned component + query manifest</text>
+    <path d="M360 209V255" fill="none" stroke="#0e5c6b" stroke-width="3"/>
+    <path d="M353 245L360 255L367 245" fill="none" stroke="#0e5c6b" stroke-width="3"/>
+    <text x="380" y="238" font-size="14" fill="#5a6472">Deploy</text>
+    <rect x="24" y="266" width="672" height="310" rx="12" fill="#f6f7f9" stroke="#8b94a3"/>
+    <text x="46" y="297" font-size="15" font-weight="700" fill="#0e5c6b">CUSTOMER ENVIRONMENT · RUN &amp; REUSE</text>
+    <rect x="55" y="321" width="285" height="64" rx="8" fill="#ffffff" stroke="#dce1e8"/>
+    <text x="197" y="348" font-size="18" font-weight="700" text-anchor="middle">Customer application</text>
+    <text x="197" y="372" font-size="15" text-anchor="middle">Published dashboard component</text>
+    <rect x="380" y="321" width="285" height="64" rx="8" fill="#ffffff" stroke="#dce1e8"/>
+    <text x="522" y="348" font-size="18" font-weight="700" text-anchor="middle">Site configurations</text>
+    <text x="522" y="372" font-size="15" text-anchor="middle">Plant A · Plant B · …</text>
+    <path d="M197 385V402H360V417M522 385V402H360" fill="none" stroke="#0e5c6b" stroke-width="2"/>
+    <path d="M353 407L360 417L367 407" fill="none" stroke="#0e5c6b" stroke-width="2"/>
+    <rect x="110" y="420" width="500" height="64" rx="8" fill="#e2f0f2" stroke="#0e5c6b"/>
+    <text x="360" y="446" font-size="18" font-weight="700" text-anchor="middle">Shared query runtime</text>
+    <text x="360" y="471" font-size="16" text-anchor="middle">bipp models · SQL generation · Access controls</text>
+    <path d="M360 484V507M353 497L360 507L367 497" fill="none" stroke="#0e5c6b" stroke-width="2"/>
+    <text x="360" y="535" font-size="20" font-weight="700" text-anchor="middle">Customer warehouse</text>
+    <text x="360" y="559" font-size="15" fill="#5a6472" text-anchor="middle">Warehouse credentials remain here</text>
+  </g>
+</svg>
