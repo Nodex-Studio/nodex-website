@@ -15,7 +15,8 @@ reports, contracts. Usually the larger half of what an organization knows, and
 much harder to query or act on.
 
 **System of Intelligence.** The analytics and AI layer sitting on top of both. It
-does not store the data. It makes the data useful.
+does not ingest or retain a durable system-of-record copy. It makes the data
+useful.
 
 Most organizations do not have all three working well at once. Knowing where an
 organization actually sits is what makes the AI conversation meaningful rather
@@ -46,25 +47,27 @@ whether they have data. It is whether they have agreed definitions.
 Nodex Studio is a System of Intelligence, and the architecture in the rest of
 this document is what makes that a description rather than a claim.
 
-**It is defined by what it refuses to store.** Most analytics products drift into
+**It is defined by what it refuses to retain.** Most analytics products drift into
 becoming a second system of record: they ingest, extract, cache, and within a
 year the organization has a subtly different duplicate of its own numbers, and a
 new argument about which one is right. Nodex Studio is forbidden from doing this.
 Warehouse credentials never leave the customer's environment (I8), queries run
 in-database with no extracts, and no data path crosses into Nodex cloud at all
 ([Security](08-security.md)). The data stays where the organization already
-governs it.
+governs it. The customer-side runtime may maintain a disposable query cache for
+performance, but that cache remains in the customer's environment and is not a
+durable system-of-record copy.
 
 This holds even when Nodex hosts. A managed plan means we deploy and operate the
 runtime inside the customer's own cloud account, not that queries come to us
 ([Data plane](06-data-plane.md#where-it-runs-and-who-operates-it)). The claim is
 not a pricing tier, it is a property of the system.
 
-There is exactly one thing the platform does store, and its boundary is drawn
-tightly on purpose. An executive who sees a number that looks wrong needs somewhere
+There is exactly one kind of durable user content the platform stores, and its
+boundary is drawn tightly on purpose. An executive who sees a number that looks wrong needs somewhere
 to say so, so the system accepts **annotations**: commentary anchored to a
-coordinate — this metric, this plant, this month. It never stores, edits, or
-duplicates the number itself, and there is no write path to the warehouse at all
+coordinate — this metric, this plant, this month. It never writes back, edits, or
+retains a durable duplicate of the number itself, and there is no write path to the warehouse at all
 (**I14**, [Data plane](06-data-plane.md#annotations)). The distinction carries the
 whole argument: commentary *about* a record is something the organization did not
 have before, whereas a copy of the record is the drift this section promises to

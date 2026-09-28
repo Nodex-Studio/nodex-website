@@ -3,9 +3,9 @@
 Nodex Studio is the intelligence layer over a customer's existing system of
 record, built on the bipp analytics modeling layer.
 A customer's developer builds a dashboard in **Studio**, and the platform emits a
-self-contained dashboard artifact that the customer deploys and operates
-themselves — as a standalone app, an iframe embed, a web component, a CDN
-bundle, or an npm library imported into their own internal applications.
+self-contained dashboard artifact. It can be hosted by Nodex as a standalone app,
+or deployed by the customer as a standalone app, iframe embed, web component,
+CDN bundle, or npm library imported into their own internal applications.
 
 ## The system in one paragraph
 
@@ -16,12 +16,14 @@ build emits a frontend artifact (custom elements, packaged six ways) and a
 declarative **query manifest**. One definition can be bound across an estate of
 sites without being copied, and repeated structure expands when the query runs
 rather than when the dashboard is authored. The manifest is executed by a single versioned
-**query runtime** that the customer runs inside their own network, bound to
+**query runtime** that runs inside the customer's own environment, bound to
 their bipp data models and their warehouse. No generated code is ever
 hand-edited, there is no escape hatch, and no artifact ever carries an endpoint or
 a credential. The runtime is also where anything that must happen without a
-browser happens — threshold monitoring and scheduled delivery — and the one thing
-the platform stores is commentary about numbers, never the numbers themselves.
+browser happens — threshold monitoring and scheduled delivery. The platform does
+not ingest or retain a durable copy of the customer's numbers: the customer-side
+runtime may cache query results temporarily, while the only durable user content
+it stores is commentary about those numbers.
 
 ## Documents
 

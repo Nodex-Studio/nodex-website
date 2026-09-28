@@ -241,7 +241,7 @@ def main():
         nav_html += f'<div class="nav-group"><p class="nav-group-title">{title}</p><ul>{links}</ul></div>'
 
     words = ["zero", "one", "two", "three", "four", "five", "six", "seven",
-             "eight", "nine", "ten", "eleven", "twelve"]
+             "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen"]
     def spell(n, cap=False):
         w = words[n] if n < len(words) else str(n)
         return w.capitalize() if cap else w
@@ -249,7 +249,7 @@ def main():
     # Every in-page anchor must land. A bare same-document link that belonged to
     # another section is repaired here; anything left over fails the build rather
     # than shipping as a dead link.
-    n_sections = len(sections)
+    n_sections = len(DOCS)
     body = "".join(sections)
     ids = set(re.findall(r'id="([^"]+)"', body))
     dead = {h for h in re.findall(r'href="#([^"]+)"', body) if h not in ids}
@@ -275,7 +275,12 @@ def main():
            .replace("<!--SUMMARY-->", summary)
            .replace("<!--SECTIONS-->", "".join(sections))
            .replace("<!--INVCOUNT-->", spell(len(invariants)))
+           .replace("<!--INVCOUNT_CAP-->", spell(len(invariants), cap=True))
            .replace("<!--OPENCOUNT-->", spell(len(opens), cap=True))
+           .replace("<!--OPENCOUNT_LOWER-->", spell(len(opens)))
+           .replace("<!--OPENCOUNT_NUM-->", str(len(opens)))
+           .replace("<!--ADRCOUNT-->", spell(sum(1 for n in nav if n["kind"] == "adr")))
+           .replace("<!--ADRCOUNT_NUM-->", str(sum(1 for n in nav if n["kind"] == "adr")))
            .replace("/*IDENTS*/", json.dumps(idents)))
     (DIST / "index.html").write_text(out)
     # GitHub Pages drops a custom domain unless CNAME is in the published

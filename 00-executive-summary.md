@@ -43,8 +43,10 @@ embeds, Web Components, CDN bundles, or framework packages.
   SQL, joins, or business definitions.
 - **Data sovereignty.** Warehouse credentials and business data remain in the
   customer's own network or cloud account.
-- **No duplicate source of truth.** Queries run against data in place; Nodex
-  does not extract or retain a competing copy of the customer's numbers.
+- **No duplicate source of truth.** Queries run against data in place. Nodex
+  does not ingest or retain a durable competing copy of the customer's numbers;
+  the runtime may cache query results temporarily inside the customer's
+  environment.
 - **Intelligence at the point of decision.** Dashboards, alerts, and scheduled
   delivery can appear inside the tools and channels people already use.
 - **Faster delivery with a stable contract.** Prompting accelerates authoring,

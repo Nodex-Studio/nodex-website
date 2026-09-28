@@ -16,7 +16,7 @@ a separate pipeline.
 | npm library | Customer | Package with framework wrappers and types |
 
 Only the first is operated by Nodex. The other five are customer-managed: the
-customer deploys them, and they query a runtime the customer also operates. **A
+customer deploys them, and they query a runtime in the customer's environment. **A
 customer-managed frontend never queries Nodex cloud** — see
 [08-security.md](08-security.md).
 

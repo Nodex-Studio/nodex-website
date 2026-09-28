@@ -15,7 +15,7 @@ copying it.
 
 | Actor | Role |
 |---|---|
-| **Nodex** | Operates Studio and the build service. Publishes the query runtime. Does not operate the customer's data plane. |
+| **Nodex** | Operates Studio and the build service and publishes the query runtime. Never hosts the data plane in Nodex cloud, but may operate it inside the customer's account on a managed plan. |
 | **Authoring developer** | Employed by the customer. Connects data sources, defines models, and publishes dashboards. Never edits generated code. Publishing is theirs alone, because a published dashboard is an API contract. |
 | **Business user** | Explores. Poses a question in Studio, builds a chart, filters it, shares it by link. Their work is ephemeral and produces no package (I10), so they need no developer skills and can break nothing. |
 | **Consuming developer** | Also employed by the customer, but a different person and often a different team. Imports the exported package into an internal application and writes code against its public API by hand. Their code is not generated and not visible to us. |
@@ -120,8 +120,9 @@ general rule rather than three exceptions.
 
 **I14 — Writes are annotations only.** The warehouse and the customer's systems of
 record are read-only to everything described here. The platform may store
-commentary the customer creates about a number; it never stores, mutates, or
-duplicates the number itself. This is what keeps the product from becoming the
+commentary the customer creates about a number; it never writes back, mutates, or
+retains a durable duplicate of the number itself. A disposable query cache may
+exist inside the customer environment. This is what keeps the product from becoming the
 second system of record it exists to avoid
 ([Product update](00a-product-update.md)).
 
@@ -157,7 +158,8 @@ is O10.
 dashboard needs: model references, dimensions, metrics, filters, parameters.
 
 **Query runtime** — the single versioned service that executes manifests against
-the modeling layer. Customer-operated.
+the modeling layer. Always hosted in the customer's environment; operated by the
+customer or by Nodex on a managed plan.
 
 **Modeling layer** — bipp's existing semantic layer. Defines models, joins,
 metrics, and row-level security, and generates SQL. Pre-existing; not designed

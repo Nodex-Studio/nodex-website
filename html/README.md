@@ -29,8 +29,9 @@ python3 -m http.server 8811 --directory html/dist
   does not collide with itself.
 - Rewrites cross-file links (`06-data-plane.md#query-protocol`) into in-page
   anchors, and swaps bare-filename link text for the section's name.
-- Turns every `I1`–`I9` and `O1`–`O5` reference into a chip that surfaces the
-  rule on hover, reading the text straight out of `01-overview.md`.
+- Turns every invariant and open-decision identifier (`I…` and `O…`) into a chip
+  that surfaces the rule on hover, reading the text straight out of
+  `01-overview.md`.
 
 ## Adding a document
 
