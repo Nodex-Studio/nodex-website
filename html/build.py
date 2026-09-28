@@ -124,7 +124,7 @@ def rewrite_links(html_text):
     return re.sub(r'(<a href="#[^"]*">)([0-9]{2}[a-z]?-[a-z-]+\.md)</a>', label, html_text)
 
 
-IDENT = re.compile(r"(?<![\w#/-])(I[1-9]|O[1-9])(?![\w-])")
+IDENT = re.compile(r"(?<![\w#/-])(I[1-9][0-9]?|O[1-9][0-9]?)(?![\w-])")
 
 
 def link_identifiers(html_text):
@@ -169,7 +169,7 @@ def extract_invariants():
     text = (SRC / "01-overview.md").read_text()
     body = text.split("## Core invariants")[1].split("## Glossary")[0]
     out = []
-    for m in re.finditer(r"\*\*(I[1-9]) — ([^*]+?)\*\*\s*(.*?)(?=\n\*\*I[1-9]|\Z)", body, re.S):
+    for m in re.finditer(r"\*\*(I[1-9][0-9]?) — ([^*]+?)\*\*\s*(.*?)(?=\n\*\*I[1-9]|\Z)", body, re.S):
         rest = re.sub(r"\s+", " ", m.group(3)).strip()
         rest = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", rest)
         rest = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", rest)
@@ -223,6 +223,12 @@ def main():
         )
         nav_html += f'<div class="nav-group"><p class="nav-group-title">{title}</p><ul>{links}</ul></div>'
 
+    words = ["zero", "one", "two", "three", "four", "five", "six", "seven",
+             "eight", "nine", "ten", "eleven", "twelve"]
+    def spell(n, cap=False):
+        w = words[n] if n < len(words) else str(n)
+        return w.capitalize() if cap else w
+
     tpl = (ROOT / "template.html").read_text()
     out = (tpl
            .replace("/*STYLES*/", (ROOT / "styles.css").read_text())
@@ -231,6 +237,8 @@ def main():
            .replace("<!--HERO-->", hero)
            .replace("<!--OPEN-->", open_cards)
            .replace("<!--SECTIONS-->", "".join(sections))
+           .replace("<!--INVCOUNT-->", spell(len(invariants)))
+           .replace("<!--OPENCOUNT-->", spell(len(opens), cap=True))
            .replace("/*IDENTS*/", json.dumps(idents)))
     (DIST / "index.html").write_text(out)
     # GitHub Pages drops a custom domain unless CNAME is in the published

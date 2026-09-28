@@ -14,7 +14,8 @@ dashboard as a real, deployable, importable artifact in six different shapes.
 | Actor | Role |
 |---|---|
 | **Nodex** | Operates Studio and the build service. Publishes the query runtime. Does not operate the customer's data plane. |
-| **Authoring developer** | Employed by the customer. Connects data sources, defines models, builds dashboards in Studio. Never edits generated code. |
+| **Authoring developer** | Employed by the customer. Connects data sources, defines models, and publishes dashboards. Never edits generated code. Publishing is theirs alone, because a published dashboard is an API contract. |
+| **Business user** | Explores. Poses a question in Studio, builds a chart, filters it, shares it by link. Their work is ephemeral and produces no package (I10), so they need no developer skills and can break nothing. |
 | **Consuming developer** | Also employed by the customer, but a different person and often a different team. Imports the exported package into an internal application and writes code against its public API by hand. Their code is not generated and not visible to us. |
 | **End user** | Views the dashboard, applies filters, drills in. Subject to row-level security. |
 | **Operator** | Runs the query runtime in the customer's environment, upgrades it, holds the warehouse credentials. |
@@ -82,6 +83,11 @@ plane never holds them and never proxies a query.
 manifests, not deployable services. There is exactly one executable to patch.
 See [ADR-0004](adr/0004-manifest-not-service.md).
 
+**I10 — Exploration produces no artifact.** Only a published dashboard carries a
+public API, a manifest, or a version. Ad hoc exploration is ephemeral by
+construction, so a business user cannot break a consuming developer's build.
+See [Explore and publish](03-studio.md#explore-and-publish).
+
 ## Glossary
 
 **AST** — the structured, schema-conforming representation of a dashboard. The
@@ -122,3 +128,4 @@ Deliberately unresolved. Each needs an owner before implementation starts.
 | O4 | Query runtime packaging: container, Helm chart, or binary | [06-data-plane.md](06-data-plane.md) |
 | O5 | Where the AST is stored for on-premise customers — Nodex cloud or the customer's own git. bipp already has git-based version control, which argues for theirs | [02-ast.md](02-ast.md) |
 | O6 | Who closes the content-governance gap — folders, certification, usage analytics, lineage. It degrades fastest under our usage pattern, not bipp's | [00b-platform.md](00b-platform.md) |
+| O7 | Whether the runtime pushes updates (SSE or WebSocket) or the client polls. Polling ships sooner; push is the only honest answer for a dashboard on a wall | [06-data-plane.md](06-data-plane.md) |

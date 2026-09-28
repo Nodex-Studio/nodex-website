@@ -41,6 +41,7 @@ queries:
     model: retail_sales          # resolved in the modeling layer
     metrics: [total_sales]
     filters: [$city, $state, $department]
+    maxAge: 60s                  # see "Freshness and refresh"
 
   - id: q_sales_trend
     widget: w_c14b02
@@ -66,6 +67,14 @@ This is the reason this design is materially safer than prompt-to-SQL: the
 generated layer never expresses arbitrary SQL, so it cannot express a wrong join,
 a fan-out, or an unbounded scan. It can only reference metrics someone already
 defined and reviewed.
+
+It also means **business logic never ships to a client.** A dashboard running
+inside a customer's own web application, served from a CDN, or imported into an
+internal tool contains no join, no metric definition and no table name. The
+organization's business logic stays in the modeling layer under its own version
+control, and the artifact carries only references into it. That is a stronger
+guarantee than keeping queries server-side: there is no query in the client to
+begin with, so there is nothing to read out of a bundle.
 
 ## Query runtime
 
@@ -109,6 +118,43 @@ The last point is the important one. A client can only ask for queries the
 manifest already declares, with parameter values the runtime validates. It cannot
 construct a new query. Compromising the frontend does not widen data access
 beyond what that dashboard was already permitted.
+
+## Freshness and refresh
+
+In-database execution means a query returns current data. It does not, on its
+own, mean a dashboard stays current — a page that loaded an hour ago shows
+hour-old numbers unless something refreshes it. For a dashboard people use to
+monitor anything, silent staleness is the failure that matters, because a stale
+number looks exactly like a fresh one.
+
+Three mechanisms, and they are separate on purpose:
+
+**Declared freshness.** Each query in the manifest carries a `maxAge`. It is the
+cache's authority: a request arriving after `maxAge` bypasses the cached result
+rather than serving it. Freshness is a property of the query, not of the client
+asking, so a fast-moving operational metric and a monthly financial rollup do not
+have to share a policy.
+
+**Refresh interval.** The host application sets it at mount, because only the
+host knows whether this dashboard is on a wall or in a settings page:
+
+```js
+mount(el, { endpoint, getToken, refresh: 30_000 });   // ms; omit for manual only
+```
+
+**Observable currency.** Every response carries `asOf` — the time the underlying
+result was produced, not the time it was served from cache. Components expose it,
+so a dashboard can state its own age rather than implying it is live. A widget
+whose data is older than its `maxAge` and has failed to refresh must say so
+visibly; it must never keep displaying a stale number as if it were current.
+
+**O7 (OPEN)** — whether the runtime pushes updates (server-sent events or
+WebSocket) instead of the client polling. Polling is simple, works through every
+proxy a customer has, and ships sooner; it also scales badly with widget count
+and wastes warehouse spend on queries nobody is watching. Push is the honest
+answer for genuinely live dashboards and a significant amount of work in a
+customer-operated runtime. Polling first, with the protocol versioned so push can
+be added without breaking pinned clients ([Versioning](07-versioning.md)).
 
 ## Authentication and row-level security
 

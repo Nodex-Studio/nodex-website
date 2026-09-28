@@ -72,11 +72,13 @@ developers import. Insight that has to be travelled to is insight that mostly
 does not get used.
 
 **It lowers the cost of asking.** An organization reaches level 5 when posing a
-new question stops requiring a specialist. Prompt authoring does that. Schema-
-bounded generation ([ADR-0002](adr/0002-schema-bounded-generation.md)) is what
-keeps it trustworthy while doing it: a non-specialist cannot author a wrong join
-or an unbounded scan, because the schema does not contain one. The guardrail is
-structural, not advisory.
+new question stops requiring a specialist. Prompt authoring does that, and
+exploration is open to anyone with access to the models — no developer in the
+loop ([Explore and publish](03-studio.md#explore-and-publish)). Schema-bounded
+generation ([ADR-0002](adr/0002-schema-bounded-generation.md)) is what keeps it
+trustworthy: a non-specialist cannot author a wrong join or an unbounded scan,
+because the schema does not contain one. The guardrail is structural, not
+advisory, which is why self-serve here does not mean unreliable.
 
 ## What we do not do yet
 

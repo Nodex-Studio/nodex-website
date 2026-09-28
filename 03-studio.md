@@ -123,6 +123,36 @@ The split the UI should encourage:
 Neither mode should be made to cover the other's job, and neither should be a
 second-class path to the AST.
 
+## Explore and publish
+
+Not everyone who asks a question should have to be a developer, and not every
+answer should become a contract. Studio has two modes, with deliberately
+different guarantees.
+
+| | Explore | Publish |
+|---|---|---|
+| Who | Anyone with access to the models | Authoring developer |
+| Produces | A view, shareable by link | A versioned package and a query manifest |
+| Public API | None (I10) | Yes, under mechanical semver (I4, I5) |
+| Can break someone's build | No | Yes, which is why it is gated |
+| Lives | A saved personal or shared view | The customer's package registry |
+
+Both modes edit the same AST through the same validated patch pipeline (I6), so
+they are not two products. An exploration that turns out to matter is **promoted**
+rather than rebuilt: it gains stable node ids, a version, and a manifest, and
+becomes a published dashboard with the same content it already had.
+
+This is what makes the level 5 claim in
+[Product update](00a-product-update.md) true without putting the API contract at
+risk. A business user can pose a new question, chart it, filter it and share it
+without a data team in the loop, because nothing they make carries a version
+that someone else's code depends on. The moment something does carry that
+contract, publishing it is a developer's decision and passes the semver gate
+([Versioning](07-versioning.md)).
+
+The permission boundary is therefore on **publish**, not on authoring. Exploring
+is as open as read access to the models allows.
+
 ## Preview
 
 The preview in Studio is the real artifact, not an approximation: the same

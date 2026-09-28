@@ -37,6 +37,7 @@ mount(document.querySelector('#dash'), {
   endpoint: 'https://analytics.acme.internal/q',   // customer's runtime
   getToken: () => acmeAuth.embedToken(),           // host app mints it
   theme: acmeTheme,
+  refresh: 30_000,                                 // ms; omit for manual only
 });
 ```
 

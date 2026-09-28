@@ -27,6 +27,11 @@ already declared and reviewed, so it cannot express a wrong join or an unbounded
 scan ([ADR-0004](adr/0004-manifest-not-service.md)). It is also why level 3 is a
 prerequisite rather than a preference.
 
+It is what secures the organization's business logic, and Nodex Studio makes that
+guarantee stronger rather than weaker: because the manifest carries references
+rather than SQL, business logic never reaches a client at all, including one
+running inside someone else's web application ([Data plane](06-data-plane.md)).
+
 **Visual SQL explorer.** Non-technical users build charts without code;
 developers get a SQL editor. Data from several sources can be combined without
 standing up a separate pipeline.
@@ -45,6 +50,8 @@ precedent for the customer-operated data plane
 | | bipp today | With Nodex Studio |
 |---|---|---|
 | Authoring | Point-and-click, or SQL | Prompts and direct manipulation, both editing one AST ([Studio](03-studio.md)) |
+| Who can author | Analysts and developers | Anyone explores; developers publish ([Explore and publish](03-studio.md#explore-and-publish)) |
+| Staying current | Queries return current data | Declared freshness, refresh intervals, and visible staleness ([Data plane](06-data-plane.md)) |
 | Output | A dashboard inside the BI tool | A deployable, importable artifact the customer owns and versions (I1) |
 | Distribution | One embed path | Six delivery modes, including npm libraries for four frameworks ([Distribution](05-distribution.md)) |
 | Backend | A BI server | A declarative manifest executed by one versioned runtime (I9) |
