@@ -121,3 +121,4 @@ Deliberately unresolved. Each needs an owner before implementation starts.
 | O3 | Is the custom-widget escape hatch in v1, or deferred? | [03-studio.md](03-studio.md) |
 | O4 | Query runtime packaging: container, Helm chart, or binary | [06-data-plane.md](06-data-plane.md) |
 | O5 | Where the AST is stored for on-premise customers — Nodex cloud or the customer's own git. bipp already has git-based version control, which argues for theirs | [02-ast.md](02-ast.md) |
+| O6 | Who closes the content-governance gap — folders, certification, usage analytics, lineage. It degrades fastest under our usage pattern, not bipp's | [00b-platform.md](00b-platform.md) |

@@ -16,7 +16,8 @@ DOMAIN = "nodex.studio"
 
 # (source file, section id, nav label, kind)
 DOCS = [
-    ("00-product-update.md", "product-update", "Product update",  "intro"),
+    ("00a-product-update.md", "product-update", "Product update",  "intro"),
+    ("00b-platform.md",       "platform",       "Platform baseline", "intro"),
     ("01-overview.md",     "overview",     "Overview",            "doc"),
     ("02-ast.md",          "ast",          "The AST",             "doc"),
     ("03-studio.md",       "studio",       "Studio",              "doc"),
@@ -120,10 +121,10 @@ def rewrite_links(html_text):
     # here. Swap it for the section's name.
     def label(m):
         return m.group(1) + FILE_TO_LABEL.get(m.group(2), m.group(2)) + "</a>"
-    return re.sub(r'(<a href="#[^"]*">)([0-9]{2}-[a-z-]+\.md)</a>', label, html_text)
+    return re.sub(r'(<a href="#[^"]*">)([0-9]{2}[a-z]?-[a-z-]+\.md)</a>', label, html_text)
 
 
-IDENT = re.compile(r"(?<![\w#/-])(I[1-9]|O[1-5])(?![\w-])")
+IDENT = re.compile(r"(?<![\w#/-])(I[1-9]|O[1-9])(?![\w-])")
 
 
 def link_identifiers(html_text):
@@ -182,7 +183,7 @@ def extract_open():
     text = (SRC / "01-overview.md").read_text()
     body = text.split("## Open decisions")[1]
     out = []
-    for m in re.finditer(r"\|\s*(O[1-5])\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|", body):
+    for m in re.finditer(r"\|\s*(O[1-9])\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|", body):
         where = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", m.group(3))
         out.append({"id": m.group(1), "rule": m.group(2), "detail": f"Decided in: {where}"})
     return out

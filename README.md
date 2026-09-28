@@ -22,7 +22,8 @@ hand-edited, and no artifact ever carries an endpoint or a credential.
 
 | Doc | Subject |
 |---|---|
-| [00-product-update.md](00-product-update.md) | Where Nodex Studio sits: systems of record, content and intelligence, and the AI maturity ladder |
+| [00a-product-update.md](00a-product-update.md) | Where Nodex Studio sits: systems of record, content and intelligence, and the AI maturity ladder |
+| [00b-platform.md](00b-platform.md) | What bipp already provides, what Nodex Studio adds, and what neither does yet |
 | [01-overview.md](01-overview.md) | Actors, planes, core invariants, glossary |
 | [02-ast.md](02-ast.md) | The AST: schema, node identity, patches, provenance, versioning |
 | [03-studio.md](03-studio.md) | Authoring: prompt pipeline, manual editing, selection, escape hatch |
