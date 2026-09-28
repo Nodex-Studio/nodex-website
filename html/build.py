@@ -11,6 +11,7 @@ from pathlib import Path
 import re
 
 import markdown
+from technical_build import build_technical
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT.parent / '00-executive-summary.md'
@@ -22,6 +23,9 @@ SECTIONS = [
     ('experience', 'The experience'),
     ('flexibility', 'Dashboard flexibility'),
     ('architecture', 'Architecture'),
+    ('source', 'Source & storage'),
+    ('updates', 'Incremental updates'),
+    ('interactions', 'Graphs & widgets'),
     ('delivery', 'Embedding & deployment'),
     ('trust', 'Trustworthy results'),
     ('proof', 'The first proof'),
@@ -29,20 +33,20 @@ SECTIONS = [
 ]
 
 LAYERS = [
-    ('studio', 'Nodex Studio', 'Chat + dashboard canvas · embedded or independent',
-     'The proposed customer experience: describe a business need, inspect the result, refine it through conversation or direct editing, and save a useful dashboard.', True),
-    ('ai', 'Conversation & planning', 'Understand intent · propose changes',
-     'Uses permitted bipp model context and the current dashboard. Clarifies business meaning and plans edits; it cannot grant access or silently redefine a shared metric.', False),
-    ('state', 'Shared dashboard state', 'Inspect · edit · save · recover',
-     'Chat and visual editing need the same saved representation. Inspect bipp’s existing report and dashboard definitions before introducing another format.', False),
-    ('integration', 'Nodex–bipp integration', 'Validate changes · invoke supported operations',
-     'Proposed integration services apply authorized dashboard changes through supported bipp interfaces. API availability, embedding of authoring, and extension boundaries require verification.', True),
-    ('data', 'bipp analytics', 'Models · generated queries · dashboards',
-     'Reuse business definitions, query generation, permission enforcement, and existing visualizations where interfaces permit. Extend rendering only for demonstrated gaps, including snapshot compatibility.', False),
-    ('distribution', 'bipp delivery', 'Filtered schedules · PDF/JPG · recipients',
-     'The demonstration shows scheduled, filtered dashboard snapshots and email delivery. Nodex can connect to these capabilities after authoring is proven; it must resolve recipients, access, timing, and output support.', False),
-    ('platform', 'Customer databases', 'Business data queried through bipp',
-     'The demonstrated in-database approach executes queries against the underlying data source. This does not imply zero data transfer or guarantee a particular query latency.', True),
+    ('studio', 'Chat → versioned application source', 'Authoring · durable Nodex project storage',
+     'An orchestrator and coding agent inspect source and permitted model context, plan targeted edits, and repair from test diagnostics within limits. Trusted services check and approve releases. Source revisions—not chat alone—record the application.', True),
+    ('build', 'Isolated backend build', 'Pinned dependencies · compile · test',
+     'A temporary worker builds a source revision and checks rendering, interactions, and data access. Generated code runs outside the main Nodex server. Failed builds leave the working dashboard available.', True),
+    ('assets', 'Versioned application artifacts', 'Disposable IIFE bundle + CSS + assets + manifest',
+     'Successful builds enter durable artifact storage. Load approved classic script bundles rather than a new native ES-module import per revision. Revision-specific dependencies stay inside the bundle; shared runtime dependencies stay pinned. History remains on the backend.', True),
+    ('runtime', 'Native dashboard host', 'Register · mount in DOM · update · dispose · unregister',
+     'The persistent host creates an instance from the registered factory, transfers compatible state, and switches when ready. Retired factories, instances, and side effects are released so they can be garbage-collected; collection is not guaranteed or immediate. Shared-page privileges remain.', True),
+    ('data', 'Authorized data gateway', 'Server-side permissions · approved operations',
+     'Applications call the Nodex SDK directly; it invokes the backend gateway. Every operation is authorized server-side. Service credentials stay on the backend. The SDK is an integration contract, not a browser security boundary.', True),
+    ('analytics', 'bipp analytics', 'Approved models → queries → customer data',
+     'Reuse bipp’s business definitions, query generation, and access controls where supported interfaces permit. Rendering a metric differently does not change its shared definition. API availability still needs verification.', False),
+    ('services', 'Approved external services', 'Connector-backed data and actions',
+     'Additional APIs can support specialized graphs or widgets. New server logic, jobs, and write operations require separately authorized backend capabilities; generated frontend code alone does not provide them.', False),
 ]
 
 
@@ -51,14 +55,15 @@ def architecture():
              '<p class="architecture-label">Select a layer to explore its role.</p>',
              '<div class="architecture-map">']
     for i, (key, title, subtitle, detail, full) in enumerate(LAYERS):
-        if i == 1:
-            parts.append('<div class="architecture-connector">↓ Requests and direct edits</div>')
-        if i == 3:
-            parts.append('<div class="architecture-connector">↓ Proposed dashboard changes</div>')
-        if i == 4:
-            parts.append('<div class="architecture-connector">↓ Authorized analytics and delivery operations</div>')
-        if i == 6:
-            parts.append('<div class="architecture-connector">bipp analytics ↔ database queries and results</div>')
+        connectors = {
+            1: '↓ Build the requested source revision',
+            2: '↓ Store successful build outputs',
+            3: '↓ Notify studio · load bundle · register factory · mount',
+            4: '↕ Direct SDK calls and authorized results — no rebuild',
+            5: '↕ Invoke supported analytics or service operations',
+        }
+        if i in connectors:
+            parts.append(f'<div class="architecture-connector">{connectors[i]}</div>')
         parts.append(
             f'<button type="button" class="architecture-node{" full" if full else ""}" '
             f'data-layer="{key}" data-detail="{html.escape(detail, quote=True)}" '
@@ -166,12 +171,8 @@ def main():
     )
     DIST.mkdir(exist_ok=True)
     DIST.joinpath('index.html').write_text(document, encoding='utf-8')
-    # The compatibility route contains none of the superseded architecture.
-    DIST.joinpath('technical.html').write_text(
-        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
-        '<meta http-equiv="refresh" content="0;url=index.html">'
-        '<title>Studio proposal</title></head><body>'
-        '<a href="index.html">Read the current studio proposal</a></body></html>\n', encoding='utf-8')
+    # Fresh native reference; historical numbered specifications remain excluded.
+    build_technical(DIST, CheckMarkup)
     DIST.joinpath('CNAME').write_text('nodex.studio\n', encoding='utf-8')
     DIST.joinpath('.nojekyll').touch()
     if args.preview:

@@ -8,24 +8,49 @@ AI chat guides dashboard creation and iterative editing inside the studio.
 - Explain product, architecture, and benefits in business terms.
 - Treat arbitrary dashboards as an extensibility ambition, not a promise of
   unlimited capability or guaranteed AI correctness.
-- Recommend a shared editable dashboard definition, governed data access, and
-  an extension path; describe these as proposals to validate.
+- Recommend a managed application project with versioned source/configuration,
+  isolated backend builds, disposable versioned bundles, and native mounting in the studio DOM.
+  Describe these as proposals to validate, not implemented capabilities.
+- The user rejected iframe-based dashboard rendering. Use a native dashboard host
+  with mount, readiness, context/state transfer, and disposal responsibilities.
+  Calls go directly through the Nodex SDK to the authorized backend gateway.
+- Use a persistent host runtime and classic IIFE bundles that register factories,
+  not a fresh native ES-module import per revision. Dispose instances, unregister
+  retired factories, and release side effects and references. Store history on
+  the backend and reload bundles for rollback. Check for revision-specific imports
+  in dependencies. Test repeated updates for retained resources; neither HMR nor
+  cleanup guarantees immediate collection, leak-free execution, or no future refresh.
+- Native modules share the studio page's browser privileges. Do not claim that
+  SDK restrictions, testing, error boundaries, or Shadow DOM sandbox arbitrary
+  JavaScript. Approved releases are trusted frontend code. Build isolation remains.
 - Distinguish embedding the interface from hosting its backend services.
-- Reuse bipp capabilities where validated; do not invent platform gaps or claim
-  that integrations have already been implemented.
-- Keep the founder's reading path concise, specific, and free of schemas,
-  package formats, implementation protocols, and exhaustive design decisions.
-- Do not inherit the old requirement to compile and distribute dashboards as
-  separate components, query manifests, or site-bound packages.
+- Reuse bipp backend capabilities where validated; do not invent platform gaps
+  or claim that integrations have already been implemented. Nodex has its own
+  studio interface, dashboard canvas, and visual components. Do not suggest reuse
+  of bipp’s UI, dashboard editor, charts, embedding UI, or bippDash definitions.
+- Keep the founder's reading path concise and specific. The user now explicitly
+  wants the source/build/runtime lifecycle, incremental delivery, and custom
+  interactions explained. Include those decisions without exhaustive schemas.
+- Generate full browser applications for expressive freedom. Component libraries
+  accelerate creation but must not define the ceiling of supported layouts and
+  behavior. Do not restore the superseded schema-only compilation architecture.
 - Do not include the superseded technical appendix in the current HTML.
 - The user authorized consolidation and deployment on 29 September 2026.
 - Position bipp as the existing analytics foundation, not a hypothetical vendor.
   Distinguish demonstrated workflows, published capabilities, and unverified APIs.
-- Reuse its modeling, SQL generation, dashboards, access controls, and delivery
-  where interfaces permit. Inspect bippDash and custom visualizations first.
+- Reuse its modeling, SQL generation, access controls, and compatible backend
+  delivery services where interfaces permit. Descriptions of existing bipp
+  screens are evidence only, not proposed Nodex frontend dependencies.
 - Keep conversational authoring separate from greater rendering freedom.
 - Distinguish model development and release from dashboard editing. Preserve
-  snapshot compatibility for new visuals and existing scheduled delivery.
+  a path to snapshot rendering, but verify whether bipp delivery can consume it.
+- Distinguish state changes, configuration edits, and code rebuilds. Ordinary
+  dashboard interactions execute program logic, not repeated AI calls.
+- Do not promise automatic full visual editing of arbitrary code, preservation
+  of all state after code changes, or backend capabilities from frontend code.
+- The user explicitly authorized deployment of the current overview and detailed
+  technical reference. This does not imply publishing every subsequent revision.
 
-The active content is 00-executive-summary.md. Earlier numbered specifications,
-ADRs, and diagrams are historical working material and are excluded from the build.
+The overview source is 00-executive-summary.md. The new detailed reference is
+html/technical.md with its companion contracts and presentation files. Earlier
+numbered specifications, ADRs, and diagrams remain historical and excluded.

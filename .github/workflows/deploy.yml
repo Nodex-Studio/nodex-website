@@ -40,6 +40,7 @@ jobs:
 
       - name: Verify the build
         run: |
+          python3 html/test_technical.py
           proposal=html/dist/index.html
           test -s "$proposal" || { echo "::error::proposal missing"; exit 1; }
           grep -q 'id="studio-document"' "$proposal" || { echo "::error::studio document missing"; exit 1; }
@@ -50,7 +51,9 @@ jobs:
           grep -q 'data-layer="data"' "$proposal" || { echo "::error::data layer missing"; exit 1; }
           ! grep -q 'technical.html#' "$proposal" || { echo "::error::legacy appendix link"; exit 1; }
           ! grep -q '<pre>' "$proposal" || { echo "::error::code examples in proposal"; exit 1; }
-          grep -q 'url=index.html' html/dist/technical.html || { echo "::error::legacy route must redirect"; exit 1; }
+          grep -q 'id="technical-document"' html/dist/technical.html || { echo "::error::native technical reference missing"; exit 1; }
+          grep -q 'id="runtime"' html/dist/technical.html || { echo "::error::native runtime contract missing"; exit 1; }
+          test -s html/dist/technical-contracts.ts || { echo "::error::contract download missing"; exit 1; }
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
