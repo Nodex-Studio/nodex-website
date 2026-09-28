@@ -16,6 +16,7 @@ DOMAIN = "nodex.studio"
 
 # (source file, section id, nav label, kind)
 DOCS = [
+    ("00-executive-summary.md", "executive-summary", "Executive summary", "intro"),
     ("00a-product-update.md", "product-update", "Product update",  "intro"),
     ("00b-platform.md",       "platform",       "Platform baseline", "intro"),
     ("01-overview.md",     "overview",     "Overview",            "doc"),
@@ -207,9 +208,14 @@ def main():
     idents = {d["id"]: d for d in invariants + opens}
 
     sections, nav = [], []
+    summary = ""
     for path, sid, label, kind in DOCS:
         body, headings = convert(path, sid)
-        sections.append(f'<section class="doc doc-{kind}" id="{sid}"><h2 class="doc-title">{label}</h2>{body}</section>')
+        section = f'<section class="doc doc-{kind}" id="{sid}"><h2 class="doc-title">{label}</h2>{body}</section>'
+        if sid == "executive-summary":
+            summary = section
+        else:
+            sections.append(section)
         nav.append({"id": sid, "label": label, "kind": kind, "headings": headings})
 
     hero = "".join(
@@ -266,6 +272,7 @@ def main():
            .replace("<!--NAV-->", nav_html)
            .replace("<!--HERO-->", hero)
            .replace("<!--OPEN-->", open_cards)
+           .replace("<!--SUMMARY-->", summary)
            .replace("<!--SECTIONS-->", "".join(sections))
            .replace("<!--INVCOUNT-->", spell(len(invariants)))
            .replace("<!--OPENCOUNT-->", spell(len(opens), cap=True))

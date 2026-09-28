@@ -27,6 +27,7 @@ the platform stores is commentary about numbers, never the numbers themselves.
 
 | Doc | Subject |
 |---|---|
+| [00-executive-summary.md](00-executive-summary.md) | Product, architecture, benefits, and current boundaries at a glance |
 | [00a-product-update.md](00a-product-update.md) | Where Nodex Studio sits: systems of record, content and intelligence, and the AI maturity ladder |
 | [00b-platform.md](00b-platform.md) | What bipp already provides, what Nodex Studio adds, and what neither does yet |
 | [01-overview.md](01-overview.md) | Actors, planes, core invariants, glossary |
