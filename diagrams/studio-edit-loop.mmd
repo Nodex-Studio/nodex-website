@@ -1,0 +1,20 @@
+graph LR
+  sel["Selection"] --> ctx["Assemble context
+AST subtree + model catalogue"]
+  prompt["Prompt"] --> ctx
+  ctx --> gen["Structured generation
+schema-constrained"]
+  gen --> val{"Valid?"}
+  val -- "no" --> repair["Repair loop
+bounded, 3 attempts"]
+  repair --> gen
+  val -- "exhausted" --> fail["Fail visibly
+apply nothing"]
+  val -- "yes" --> prov{"Touches a
+manual property?"}
+  prov -- "yes" --> conflict["Surface conflict
+do not clobber"]
+  prov -- "no" --> apply["Apply patch
+record provenance"]
+  manual["Direct manipulation"] --> apply
+  apply --> preview["Re-render preview"]

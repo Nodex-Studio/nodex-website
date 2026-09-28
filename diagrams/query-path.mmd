@@ -1,0 +1,18 @@
+graph TD
+  user["End user"] --> host["Host app
+authenticates via their IdP"]
+  host -- "signs server-side" --> token["Embed token
+sub, dashboardId, rlsContext, exp"]
+  token --> comp["Dashboard artifact"]
+  comp -- "query id + params" --> rt["Query runtime"]
+  rt --> auth["Validate signature
+extract RLS context"]
+  auth --> resolve["Resolve declared query
+from manifest"]
+  resolve --> model["Modeling layer
+SQL + non-bypassable RLS"]
+  model --> wh["Warehouse
+in-database, no extract"]
+  wh --> cache["Cache
+keyed including RLS context"]
+  cache -- "rows" --> comp

@@ -1,0 +1,66 @@
+name: Build and deploy architecture document
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*.md"
+      - "adr/**"
+      - "diagrams/*.svg"
+      - "html/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; let an in-flight one finish rather than
+# publishing a half-built document.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build dependencies
+        run: pip install --quiet "markdown==3.5.2"
+
+      - name: Build the document
+        run: python3 html/build.py
+
+      - name: Verify the build
+        run: |
+          f=html/dist/index.html
+          test -s "$f" || { echo "::error::build produced no output"; exit 1; }
+          # Guard the things that have actually broken before.
+          grep -q 'id="overview"'  "$f" || { echo "::error::sections missing"; exit 1; }
+          grep -q 'class="ident'   "$f" || { echo "::error::invariant chips missing"; exit 1; }
+          test "$(grep -c '<svg' "$f")" -ge 5 || { echo "::error::diagrams missing"; exit 1; }
+          ! grep -q 'md</a>'       "$f" || { echo "::error::raw filename link text leaked"; exit 1; }
+          ! grep -q '&lt;br'       "$f" || { echo "::error::literal br tags in diagram labels"; exit 1; }
+          echo "built $(du -h "$f" | cut -f1), $(grep -c '<svg' "$f") diagrams"
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: html/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,28 @@
+graph TD
+  studio["STUDIO — bipp cloud
+AST store, prompt pipeline"]
+  build["BUILD PLANE — bipp cloud
+shell + interior + manifest"]
+  reg["REGISTRY — bipp cloud
+npm, CDN"]
+  boundary{"TRUST BOUNDARY
+artifacts cross one way
+no query path crosses"}
+  art["ARTIFACT — customer
+no endpoint, no secrets"]
+  host["HOST APP — customer
+mints embed tokens"]
+  rt["QUERY RUNTIME — customer
+one version, all dashboards"]
+  model["MODELING LAYER — customer
+models, metrics, RLS"]
+  wh["WAREHOUSE — customer
+credentials never leave"]
+  studio --> build
+  build --> reg
+  reg --> boundary
+  boundary -- "artifacts + manifests" --> art
+  host -- "embed token" --> art
+  art -- "query protocol" --> rt
+  rt --> model
+  model -- "generated SQL" --> wh

@@ -1,0 +1,16 @@
+graph LR
+  prompt["Prompt"] --> patch["Patch"]
+  manual["Manual edit"] --> patch
+  patch --> ast["AST
+validated, versioned"]
+  ast --> shell["Shell
+templates, deterministic"]
+  ast --> interior["Interior
+generated render logic"]
+  ast --> manifest["Query manifest
+declarative, inert"]
+  shell --> bundle["Core bundle
+custom elements"]
+  interior --> bundle
+  bundle --> modes["Six delivery modes"]
+  manifest --> runtime["Customer query runtime"]

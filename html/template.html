@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architecture — bipps dashboard platform</title>
+<meta name="description" content="Architecture for the bipps prompt-driven dashboard platform: the AST, Studio, code generation, six distribution modes, the customer-operated data plane, and the versioning contracts that hold them together.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Architecture — bipps dashboard platform">
+<meta property="og:description" content="Prompt-driven dashboard authoring on the bipp analytics modeling layer. Nine invariants, seven decisions, five open questions.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230e5c6b'/><path d='M8 22V10h5a3.2 3.2 0 010 6.4H8m9 5.6V10' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round'/></svg>">
+<style>/*STYLES*/</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="icon-btn" id="nav-toggle" type="button" aria-expanded="false" aria-label="Toggle contents">···</button>
+  <a class="brand" href="#top"><b>bipps</b> <span>/ architecture</span></a>
+  <div class="topbar-spacer"></div>
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="Search  /" autocomplete="off" aria-label="Search the document">
+    <div id="results" role="listbox" aria-label="Search results"></div>
+  </div>
+  <button class="icon-btn" id="theme-toggle" type="button">Dark</button>
+  <div class="progress" id="progress"></div>
+</header>
+
+<div class="shell">
+
+  <nav class="rail" aria-label="Contents"><!--NAV--></nav>
+
+  <main id="top">
+
+    <div class="masthead">
+      <h1>Architecture</h1>
+      <p class="sub">Prompt-driven dashboard authoring on the bipp analytics modeling layer, and the contracts that let a customer take the result away and run it.</p>
+      <div class="meta">
+        <span><b>Status</b> Draft</span>
+        <span><b>Revised</b> 28 September 2026</span>
+        <span><b>Decisions</b> 6 settled, 1 open</span>
+      </div>
+    </div>
+
+    <section class="hero">
+      <h2>The system holds nine invariants</h2>
+      <p>Everything in this document is a consequence of these. Where a design appears to contradict one, the invariant wins and the design is wrong. They are referenced by number throughout — hover any reference to see the rule.</p>
+      <ul class="inv-list"><!--HERO--></ul>
+    </section>
+
+    <section class="open-block">
+      <h2>Five questions are deliberately unresolved</h2>
+      <p>Each needs an owner before implementation starts. None of them blocks the others.</p>
+      <ul class="inv-list"><!--OPEN--></ul>
+    </section>
+
+    <!--SECTIONS-->
+
+    <footer class="doc-footer">
+      <span>bipps dashboard platform</span>
+      <span>Draft, 28 September 2026</span>
+      <span>Built from the markdown sources in <code>architecture/</code></span>
+    </footer>
+
+  </main>
+
+  <aside class="outline" aria-label="On this page">
+    <p>On this page</p>
+    <ul id="outline-list"></ul>
+  </aside>
+
+</div>
+
+<div id="ident-pop" role="tooltip" hidden></div>
+
+<div id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Diagram, full screen">
+  <button class="lb-close" type="button">Close  Esc</button>
+  <div class="lb-inner"></div>
+</div>
+
+<script>/*SCRIPT*/</script>
+</body>
+</html>

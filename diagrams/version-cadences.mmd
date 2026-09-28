@@ -1,0 +1,19 @@
+graph TD
+  cp["Control plane
+Studio + build
+continuous, bipp-controlled"]
+  rt["Query runtime
+customer-paced
+months to years behind"]
+  pkg["Exported package
+pinned at install
+indefinite"]
+  err["Explicit version error
+never a partial render"]
+  cp -- "AST schema
+migrated eagerly in cloud" --> rt
+  cp -- "public API
+mechanical semver from AST diff" --> pkg
+  pkg -- "query protocol
+negotiated at handshake" --> rt
+  rt -- "minRuntime unmet" --> err
