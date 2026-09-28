@@ -67,11 +67,14 @@
     }
     var heads = $$("h2[id]", cur), curH = null;
     for (i = 0; i < heads.length; i++) if (heads[i].offsetTop <= y) curH = heads[i];
-    if (document.body.classList.contains("page-proposal")) {
-      $$(".rail a[data-nav]").forEach(function (a) {
-        a.classList.toggle("active", !!curH && a.getAttribute("data-nav") === curH.id);
-      });
-    }
+    // Keep the parent section open and highlight the current subsection on both pages.
+    var currentId = curH && navLinks[curH.id] ? curH.id : cur.id;
+    $$(".rail a[data-nav]").forEach(function (a) {
+      var id = a.getAttribute("data-nav");
+      a.classList.toggle("active", id === cur.id || id === currentId);
+      if (id === currentId) a.setAttribute("aria-current", "location");
+      else a.removeAttribute("aria-current");
+    });
     $$("#outline-list a").forEach(function (a) {
       a.classList.toggle("active", !!curH && a.getAttribute("data-out") === curH.id);
     });
@@ -86,6 +89,9 @@
     requestAnimationFrame(function () { markActive(); ticking = false; });
   }, { passive: true });
   markActive();
+  addEventListener("resize", markActive, { passive: true });
+  addEventListener("load", markActive);
+  if (document.fonts) document.fonts.ready.then(markActive);
 
   /* Visibility is owned by CSS at the mobile breakpoint; JS only toggles the
      class, so a stale measurement can never strip the rail out of the grid. */
