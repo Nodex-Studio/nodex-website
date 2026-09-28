@@ -1,0 +1,8 @@
+{
+  "theme": "default",
+  "fontFamily": "Helvetica,\"Liberation Sans\",Arial,\"Hiragino Kaku Gothic ProN\",\"Noto Sans CJK JP\",\"Microsoft YaHei\",\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Noto Color Emoji\",sans-serif",
+  "fontSize": 16,
+  "flowchart": {
+    "useMaxWidth": true
+  }
+}

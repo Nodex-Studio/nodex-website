@@ -2,17 +2,27 @@ graph TD
   user["End user"] --> host["Host app
 authenticates via their IdP"]
   host -- "signs server-side" --> token["Embed token
-sub, dashboardId, rlsContext, exp"]
+sub, dashboardId, bindings, rlsContext, exp"]
   token --> comp["Dashboard artifact"]
-  comp -- "query id + params" --> rt["Query runtime"]
+  comp -- "query id + params + binding" --> rt["Query runtime"]
   rt --> auth["Validate signature
 extract RLS context"]
-  auth --> resolve["Resolve declared query
+  auth --> bind["Resolve binding
+refuse if not permitted"]
+  bind --> expand["Expand repeaters
+key query, bound fan-out"]
+  expand --> resolve["Plan declared query
 from manifest"]
   resolve --> model["Modeling layer
 SQL + non-bypassable RLS"]
   model --> wh["Warehouse
 in-database, no extract"]
-  wh --> cache["Cache
-keyed including RLS context"]
-  cache -- "rows" --> comp
+  wh --> part["Partition by repeat key
+one query, many instances"]
+  part --> cache["Cache
+keyed including binding + RLS context"]
+  cache -- "rows + asOf" --> comp
+  sched["Scheduler role
+no user, no host app"] --> expand
+  sched -- "condition met, hysteresis held" --> deliver["Delivery transport
+operator-configured"]

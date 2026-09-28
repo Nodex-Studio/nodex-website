@@ -8,6 +8,9 @@ months to years behind"]
   pkg["Exported package
 pinned at install
 indefinite"]
+  bind["Binding set
+continuous, as sites onboard
+never a package release"]
   err["Explicit version error
 never a partial render"]
   cp -- "AST schema
@@ -16,4 +19,6 @@ migrated eagerly in cloud" --> rt
 mechanical semver from AST diff" --> pkg
   pkg -- "query protocol
 negotiated at handshake" --> rt
+  bind -- "model interface
+validated at registration" --> rt
   rt -- "minRuntime unmet" --> err

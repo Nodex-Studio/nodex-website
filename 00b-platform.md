@@ -40,6 +40,13 @@ standing up a separate pipeline.
 chart at once. Reports can be scheduled by email as PDF or JPG, and email alerts
 fire when a number crosses a threshold.
 
+These live in the BI server, which means they work for dashboards viewed *in bipp*.
+An artifact Nodex emits runs in the customer's own application against a query
+runtime, so it cannot reach them — which is why monitors are specified in the
+runtime rather than inherited
+([Data plane](06-data-plane.md#monitors-alerts-and-scheduled-delivery)). The
+capability is not new to the platform; its availability to a deployed artifact is.
+
 **Deployment options.** Cloud by default, self-hosted on the customer's own
 servers, or embedded in their web application. The self-hosted path is the
 precedent for our data plane ([Data plane](06-data-plane.md)) — that model is
@@ -58,6 +65,11 @@ who operates it rather than where it runs.
 | Distribution | One embed path | Six delivery modes, including npm libraries for four frameworks ([Distribution](05-distribution.md)) |
 | Backend | A BI server | A declarative manifest executed by one versioned runtime (I9) |
 | Public API | None | A per-dashboard API under mechanical semver ([Versioning](07-versioning.md)) |
+| Rolling out across sites | One dashboard per site, built per site | One definition bound to many sites, one artifact, one version ([ADR-0010](adr/0010-definition-and-binding.md)) |
+| Repeated structure | Charts built per site by hand | A repeater expands over the data (**I11**) |
+| Alerts and scheduled reports | In the BI server, for dashboards viewed there | In the runtime, for dashboards deployed anywhere ([Data plane](06-data-plane.md#monitors-alerts-and-scheduled-delivery)) |
+| Flagging a suspect number | Not supported | Annotations anchored to semantic coordinates, append-only (**I14**) |
+| Maps | Not a chart type | A widget kind ([ADR-0011](adr/0011-geo-widget-kinds.md)) |
 | Maturity reached | Level 3, Defined | Levels 4 and 5, Distributed and Generative |
 
 The short version: bipp makes an organization's numbers trustworthy. Nodex
@@ -98,8 +110,6 @@ as a dependency that might not be there. It should be standard.
   cannot prune what you cannot see, and you cannot show value at renewal.
 - **Lineage and impact analysis** — what breaks if this model changes. Analysts
   stop editing models they cannot reason about, and the semantic layer sets.
-- **Delivery into Slack or Teams** — email alerts get filtered; alerts in the
-  channel where the team already works get acted on.
 
 These matter more for us than for bipp alone. Generated dashboards are cheap, so
 a customer reaches thirty of them faster than they would by hand, and sprawl
@@ -110,12 +120,22 @@ arrives sooner.
 Natural-language query and generated narrative (ours to fill); a metrics API
 serving certified definitions to other tools; caching and aggregate awareness,
 which at billions of rows are cost controls as much as performance features;
-drill-through, period-over-period comparison, pivot and cross-tab; cohort and
-funnel analysis; anomaly detection; write-back.
+period-over-period comparison, pivot and cross-tab; cohort and funnel analysis;
+anomaly detection; drill-down *within* a dashboard.
 
-Of these, the query-cost controls are already specified on our side — per-tenant
-concurrency limits, row caps, timeouts and cost ceilings live in the query
-runtime ([Data plane](06-data-plane.md)).
+Three have moved off this list and it is worth saying why, because each was a real
+gap and none was closed by accident:
+
+- **Write-back** is now annotations — bounded deliberately to commentary, never a
+  mutation of the customer's numbers (**I14**).
+- **Drill-through between dashboards** is a `link` node; drill-*down* within a
+  widget is still absent, which is the narrower gap left above.
+- **Delivery into Slack or Teams** is a monitor delivery transport rather than an
+  email-only path.
+
+Of the rest, the query-cost controls are already specified on our side — per-tenant
+concurrency limits, row caps, timeouts, cost ceilings and repeater fan-out bounds
+live in the query runtime ([Data plane](06-data-plane.md)).
 
 ### Deliberately absent
 
@@ -137,3 +157,12 @@ certification, usage analytics, lineage — is genuinely ambiguous, because it
 degrades fastest under our usage pattern rather than bipp's. That is recorded as
 an open decision (O6) and should be settled before the first customer passes a
 few dozen generated dashboards.
+
+**One new dependency runs the other way.** Binding a definition across an estate
+needs **model interfaces** in the modeling layer — one declared shape that many
+concrete models implement, so a site's data can be validated against it at
+onboarding rather than guessed at
+([ADR-0010](adr/0010-definition-and-binding.md)). Maps need geo field types in the
+same layer ([ADR-0011](adr/0011-geo-widget-kinds.md)). Neither exists today, both
+are bipp's to build, and the estate features do not work properly without the
+first. Recorded as **O10**, and it is on the critical path in a way O6 is not.

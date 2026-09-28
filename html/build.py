@@ -33,6 +33,10 @@ DOCS = [
     ("adr/0005-runtime-configured-endpoint.md", "adr-0005", "0005 · Runtime config",       "adr"),
     ("adr/0006-stable-node-identity.md",        "adr-0006", "0006 · Stable identity",      "adr"),
     ("adr/0007-reactive-runtime.md",            "adr-0007", "0007 · Reactive runtime",     "adr"),
+    ("adr/0008-no-escape-hatch.md",             "adr-0008", "0008 · No escape hatch",      "adr"),
+    ("adr/0009-runtime-repetition.md",          "adr-0009", "0009 · Runtime repetition",   "adr"),
+    ("adr/0010-definition-and-binding.md",      "adr-0010", "0010 · Definition and binding","adr"),
+    ("adr/0011-geo-widget-kinds.md",            "adr-0011", "0011 · Geo widget kinds",     "adr"),
 ]
 
 FILE_TO_ID, FILE_TO_LABEL = {}, {}
@@ -103,12 +107,19 @@ def diagram_figure(name):
 
 
 # ---------------------------------------------------------------- transforms
-def rewrite_links(html_text):
-    """Turn cross-file markdown links into in-page anchors."""
+def rewrite_links(html_text, cur):
+    """Turn cross-file markdown links into in-page anchors.
+
+    A bare "#anchor" is a same-document link, correct in the repo's markdown
+    view. Headings here are prefixed per section, so it is resolved against
+    this document first; main() catches anything that lands nowhere.
+    """
     def sub(m):
         href = m.group(1)
-        if href.startswith(("http://", "https://", "#")):
+        if href.startswith(("http://", "https://", "mailto:")):
             return m.group(0)
+        if href.startswith("#"):
+            return f'href="#{cur}--{href[1:]}"'
         path, _, anchor = href.partition("#")
         path = path.replace("../", "").lstrip("./")
         sid = FILE_TO_ID.get(path) or FILE_TO_ID.get(pathlib.Path(path).name)
@@ -157,7 +168,7 @@ def convert(path, sid):
     )
     out = md.convert(raw)
     out = swap_diagrams(out)
-    out = rewrite_links(out)
+    out = rewrite_links(out, sid)
     out = link_identifiers(out)
     out = out.replace("<table>", '<div class="table-wrap"><table>').replace("</table>", "</table></div>")
     headings = [{"id": t["id"], "text": t["name"]} for t in md.toc_tokens]
@@ -183,7 +194,7 @@ def extract_open():
     text = (SRC / "01-overview.md").read_text()
     body = text.split("## Open decisions")[1]
     out = []
-    for m in re.finditer(r"\|\s*(O[1-9])\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|", body):
+    for m in re.finditer(r"\|\s*(O[1-9][0-9]?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|", body):
         where = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", m.group(3))
         out.append({"id": m.group(1), "rule": m.group(2), "detail": f"Decided in: {where}"})
     return out
@@ -229,6 +240,25 @@ def main():
         w = words[n] if n < len(words) else str(n)
         return w.capitalize() if cap else w
 
+    # Every in-page anchor must land. A bare same-document link that belonged to
+    # another section is repaired here; anything left over fails the build rather
+    # than shipping as a dead link.
+    n_sections = len(sections)
+    body = "".join(sections)
+    ids = set(re.findall(r'id="([^"]+)"', body))
+    dead = {h for h in re.findall(r'href="#([^"]+)"', body) if h not in ids}
+    unresolved = []
+    for h in sorted(dead):
+        tail = h.split("--", 1)[-1]
+        cand = [i for i in ids if i.endswith("--" + tail)]
+        if len(cand) == 1:
+            body = body.replace(f'href="#{h}"', f'href="#{cand[0]}"')
+        else:
+            unresolved.append(h if not cand else f"{h} (ambiguous: {cand})")
+    if unresolved:
+        raise SystemExit("dead in-page anchors: " + ", ".join(unresolved))
+    sections = [body]
+
     tpl = (ROOT / "template.html").read_text()
     out = (tpl
            .replace("/*STYLES*/", (ROOT / "styles.css").read_text())
@@ -246,7 +276,7 @@ def main():
     (DIST / "CNAME").write_text(DOMAIN + "\n")
     (DIST / ".nojekyll").write_text("")
     kb = len(out.encode()) / 1024
-    print(f"dist/index.html  {kb:.0f} KB  ·  {len(sections)} sections  ·  "
+    print(f"dist/index.html  {kb:.0f} KB  ·  {n_sections} sections  ·  "
           f"{len(invariants)} invariants  ·  {len(opens)} open decisions")
 
 

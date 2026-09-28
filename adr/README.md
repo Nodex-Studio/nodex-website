@@ -9,3 +9,7 @@
 | [0005](0005-runtime-configured-endpoint.md) | Endpoint and auth as runtime configuration | Accepted |
 | [0006](0006-stable-node-identity.md) | Stable AST node identity as a public API contract | Accepted |
 | [0007](0007-reactive-runtime.md) | Reactive runtime: Lit vs. bespoke | **Open** |
+| [0008](0008-no-escape-hatch.md) | No escape hatch: schema growth is the only valve | Accepted |
+| [0009](0009-runtime-repetition.md) | Repetition expands at query time, not build time | Accepted |
+| [0010](0010-definition-and-binding.md) | One artifact per definition, never one per binding | Accepted |
+| [0011](0011-geo-widget-kinds.md) | Geo widget kinds in the schema, renderer in the interior | Accepted |

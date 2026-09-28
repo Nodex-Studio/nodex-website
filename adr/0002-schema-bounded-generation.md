@@ -21,9 +21,10 @@ Both prompts and direct manipulation produce patches against the same AST, so th
 two modes are interchangeable and round-trip perfectly, in any order, for the
 life of the dashboard.
 
-Requests outside the schema fail honestly rather than improvising. The escape
-hatch is a contained, explicitly one-way custom widget
-([03-studio.md](../03-studio.md#escape-hatch)).
+Requests outside the schema fail honestly rather than improvising. There is no
+escape hatch — the schema growing is the only valve
+([ADR-0008](0008-no-escape-hatch.md),
+[03-studio.md](../03-studio.md#when-the-schema-falls-short)).
 
 ## Consequences
 
@@ -34,8 +35,9 @@ than merely discouraged. Repair loops get precise, machine-generated errors. The
 public API stays derivable ([ADR-0006](0006-stable-node-identity.md)).
 
 **Costs.** Expressiveness is capped by the schema. Some user requests will be
-refused. Schema extension becomes the main channel for adding capability, and
-prompt-failure logs become the primary roadmap input.
+refused. Schema extension becomes the *only* channel for adding capability
+([ADR-0008](0008-no-escape-hatch.md)), and prompt-failure logs become the primary
+roadmap input.
 
 ## Alternatives considered
 

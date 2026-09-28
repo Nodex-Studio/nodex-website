@@ -2,7 +2,7 @@ graph TD
   studio["STUDIO — Nodex cloud
 AST store, prompt pipeline"]
   build["BUILD PLANE — Nodex cloud
-shell + interior + manifest"]
+shell + interior + manifest template"]
   reg["REGISTRY — Nodex cloud
 npm, CDN"]
   boundary{"TRUST BOUNDARY
@@ -13,16 +13,27 @@ no endpoint, no secrets"]
   host["HOST APP — customer
 mints embed tokens"]
   rt["QUERY RUNTIME — customer account
+web + scheduler roles
 self-operated or Nodex-managed"]
+  bind["BINDING REGISTRY — customer
+one record per site"]
+  state["RUNTIME STATE — customer
+monitor state, annotations"]
   model["MODELING LAYER — customer
 models, metrics, RLS"]
   wh["WAREHOUSE — customer
 credentials never leave"]
+  deliver["DELIVERY — customer transports
+mail relay, webhook, chat"]
   studio --> build
   build --> reg
   reg --> boundary
   boundary -- "artifacts + manifests" --> art
   host -- "embed token" --> art
-  art -- "query protocol" --> rt
+  art -- "query protocol
+read + annotate" --> rt
+  rt --> bind
+  rt --> state
   rt --> model
   model -- "generated SQL" --> wh
+  rt -- "monitors, scheduled reports" --> deliver

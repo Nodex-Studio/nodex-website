@@ -1,9 +1,9 @@
 # 07 — Versioning and release
 
-## Three cadences
+## Four cadences
 
-The platform releases on three independent clocks. Conflating them is the most
-expensive mistake available here, because two of the three are outside our
+The platform releases on four independent clocks. Conflating them is the most
+expensive mistake available here, because three of the four are outside our
 control.
 
 | | Cadence | Controlled by | Version skew |
@@ -11,11 +11,13 @@ control.
 | **Control plane** (Studio, build) | Continuous | Nodex | None — one version live |
 | **Query runtime** (customer's environment) | Customer-paced, or Nodex-paced when managed | Customer, or Nodex | Months to years self-operated; small when managed |
 | **Exported artifacts** (npm, CDN) | Pinned at install | Consuming developer | Indefinite |
+| **Binding sets** (the estate) | Continuous, as sites onboard | Customer | None — current set is the only set |
 
 A realistic steady state: Studio is on this week's build, a self-operated runtime
-is eleven months old, and a team inside that customer has a dashboard package
-pinned from before the runtime was last upgraded. All three must interoperate,
-and none of them can be forced.
+is eleven months old, a team inside that customer has a dashboard package pinned
+from before the runtime was last upgraded, and three sites were onboarded to the
+estate this morning. All four must interoperate, and none of the last three can be
+forced.
 
 Managed runtimes compress the middle row — Nodex upgrades them within an agreed
 window, so those customers stay close to current
@@ -29,6 +31,9 @@ Two consequences follow, and they are the spine of this document:
   internal formats. They are versioned explicitly and negotiated at runtime.
 - **The exported package's public API is a contract with a human** — the
   consuming developer, whose code we cannot see and cannot regenerate.
+- **Onboarding a site must not be a release.** Bindings move on their own clock
+  precisely so that the estate can grow without touching any of the other three
+  (**I12**) — see [Binding sets](#binding-sets).
 
 ![Three release cadences](diagrams/version-cadences.png)
 
@@ -47,12 +52,35 @@ AST(n)   ──┘
 |---|---|---|
 | Widget added | New handle, new event source | minor |
 | Param added (optional) | New optional prop | minor |
+| Repeater added | New collection handle | minor |
+| Widget made optional | Handle becomes possibly-absent | **major** |
 | Widget title changed | None — ids are stable | patch |
 | Layout reordered | None | patch |
 | Interior regenerated | None | patch |
+| Repeat key changed | Instance ids change under consumers | **major** |
+| Link target's mapped param removed | The *linking* dashboard's contract breaks | **major** |
 | Param renamed or re-typed | Prop renamed / re-typed | **major** |
 | Widget deleted | Handle removed | **major** |
 | Exposed `::part()` removed | Consumer CSS breaks | **major** |
+
+Three of those rows are consequences of this architecture's later additions and
+are easy to get wrong:
+
+**Making a widget optional is breaking, not additive.** It turns a handle a
+consumer dereferences today into one that may be absent, which is a type change in
+their code even though nothing was removed from the dashboard.
+
+**Changing a repeat key is breaking**, because instance identity is derived from it
+(**I11**). Every instance id a consumer has stored, logged, or deep-linked stops
+resolving. This is the one breaking change that leaves the dashboard looking
+completely normal.
+
+**Links make dependencies bidirectional.** Dashboard B removing a param that
+dashboard A maps into it breaks A, not B. The semver gate must therefore diff
+*inbound* link references too, and tell the author of B which dashboards link to
+it — otherwise the one person who can see the break is the one person not making
+the change. How those references resolve — by id plus a version range, or pinned —
+is **O13 (OPEN)**.
 
 Enforced in CI by diffing the generated `.d.ts` between builds (api-extractor or
 equivalent). A major bump requires explicit acknowledgement from the authoring
@@ -65,6 +93,31 @@ of what breaks:
 That message is the entire point of the machinery. Without it, an authoring
 developer has no way to know that a rename in a visual tool is an API break in
 someone else's build.
+
+## Binding sets
+
+An estate's bindings are data in the data plane
+([06-data-plane.md](06-data-plane.md#binding-resolution)), and they are versioned
+apart from everything else. Three rules:
+
+- **Adding, changing or removing a binding is never a dashboard release.** No
+  build, no semver bump, no notification to consuming developers. A customer
+  onboarding thirty sites this quarter produces zero package versions.
+- **The model interface is the contract, and changing it is breaking.** Every
+  binding implements a declared shape; adding a required field to that shape
+  invalidates every binding that does not yet provide it. So interface changes are
+  additive-optional by default, and a required addition is a migration across the
+  estate with a deadline, not a schema tweak.
+- **A binding is validated when it is registered**, against the interface the
+  current definition declares. A definition that adds a widget referencing a field
+  some bindings lack must declare that widget `optional`, or it fails validation
+  for those sites at build time rather than at render time.
+
+The failure this separation prevents is specific and expensive: a hundred-site
+estate where every onboarding emits a version bump, every consuming team sees
+weekly minor releases that change nothing for them, and the semver signal becomes
+noise inside a month. Once that happens, nobody reads the major-bump warning that
+the whole of [Mechanical semver](#mechanical-semver) exists to deliver.
 
 ## Compatibility contracts
 
@@ -97,10 +150,12 @@ internal and may change on any build:
 - Named slots
 - CSS custom properties (theme tokens)
 - Exposed `::part()` names
-- The `mount()` options object
+- The `mount()` options object, including `binding`
 - The iframe `postMessage` protocol
-- The query protocol
+- The query protocol, including the annotation write verb
 - The AST schema
+- A dashboard's declared params, as seen by *another* dashboard linking to it
+- The model interface a binding set implements
 
 The list should stay short. Every entry is something we cannot change for the
 length of the support window.
@@ -120,6 +175,11 @@ Published, not implied:
   runtime advertising vN.
 - **CDN URLs** — immutable and permanent. Published bytes are never changed or
   removed. Withdrawing a version breaks production pages we cannot see.
+- **Runtime state** — monitor state and the annotation store are migrated
+  forward-only on upgrade, and a runtime that cannot migrate refuses to start
+  ([06-data-plane.md](06-data-plane.md#state-deployment-and-upgrade)). Annotations
+  are customer content: no upgrade may discard them, and the support window for
+  reading an old store format is the same as the runtime's.
 
 Deprecations are announced with a date, surfaced in Studio for the authoring
 developer and in the runtime's health output for the operator. Nothing is removed

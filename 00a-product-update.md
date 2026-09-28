@@ -60,6 +60,18 @@ runtime inside the customer's own cloud account, not that queries come to us
 ([Data plane](06-data-plane.md#where-it-runs-and-who-operates-it)). The claim is
 not a pricing tier, it is a property of the system.
 
+There is exactly one thing the platform does store, and its boundary is drawn
+tightly on purpose. An executive who sees a number that looks wrong needs somewhere
+to say so, so the system accepts **annotations**: commentary anchored to a
+coordinate — this metric, this plant, this month. It never stores, edits, or
+duplicates the number itself, and there is no write path to the warehouse at all
+(**I14**, [Data plane](06-data-plane.md#annotations)). The distinction carries the
+whole argument: commentary *about* a record is something the organization did not
+have before, whereas a copy of the record is the drift this section promises to
+refuse. An annotation store cannot become a rival source of truth, because it holds
+no truths — only what people said about them. It also lives in the customer's own
+environment, like everything else here.
+
 **It speaks the organization's own definitions.** Nodex Studio binds to the
 System of Record through the modeling layer, so it references metrics that were
 declared once and reviewed — never raw tables it interpreted for itself. A System
@@ -75,6 +87,13 @@ can sit inside the application where the decision is actually made — the inter
 ops tool, the account page, the planning app — as a component the customer's own
 developers import. Insight that has to be travelled to is insight that mostly
 does not get used.
+
+The strongest form of this is not a dashboard at all. A threshold crossing that
+reaches the channel where the team already works, evaluated inside the customer's
+own environment with nobody watching a screen, is delivery to the point of decision
+in its most literal sense
+([Data plane](06-data-plane.md#monitors-alerts-and-scheduled-delivery)). Level 4
+is reached by answers arriving, not by dashboards existing.
 
 **It lowers the cost of asking.** An organization reaches level 5 when posing a
 new question stops requiring a specialist. Prompt authoring does that, and

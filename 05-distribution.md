@@ -39,15 +39,27 @@ import { mount } from '@nodex/dashboard-sales';
 mount(document.querySelector('#dash'), {
   endpoint: 'https://analytics.acme.internal/q',   // customer's runtime
   getToken: () => acmeAuth.embedToken(),           // host app mints it
+  binding: 'plant-47',                             // which site, if the estate is bound
   theme: acmeTheme,
   refresh: 30_000,                                 // ms; omit for manual only
+  onNavigate: (req) => router.push(routeFor(req)), // host owns routing
 });
 ```
+
+`binding` is how one artifact serves an entire estate (**I12**,
+[ADR-0010](adr/0010-definition-and-binding.md)). It names a site, not a
+permission: the runtime still decides whether this token's bearer may use that
+binding, so a host application cannot read another site's numbers by changing the
+string ([06-data-plane.md](06-data-plane.md#binding-resolution)).
 
 If the endpoint were baked in at build time, every deployment topology would need
 its own build, and the six modes would multiply by the number of environments
 each customer runs. Injection keeps it at six, forever, and means an artifact can
 be promoted from staging to production without a rebuild.
+
+The same argument applies to `binding`, one dimension further out: baking a site
+into the build would multiply six modes by every site in the estate. Six stays
+six regardless of whether the customer has one site or two hundred.
 
 ## Package layout
 
@@ -99,7 +111,8 @@ export const SalesDashboard = forwardRef<SalesDashboardElement, Props>((props, r
     if (!el.current) return;
     el.current.region = props.region ?? null;
     el.current.dateRange = props.dateRange ?? null;
-  }, [props.region, props.dateRange]);
+    el.current.binding = props.binding ?? null;
+  }, [props.region, props.dateRange, props.binding]);
 
   useEffect(() => {                       // custom events
     const node = el.current;
@@ -138,6 +151,25 @@ manager deduplicates. <a id="shared-runtime"></a>
 Bundling React yields two Reacts and invalid-hook-call errors in the consumer's
 app, which is a miserable thing to debug from their side.
 
+**Widgets that are absent in some bindings.** A definition bound across an estate
+may declare widgets that only some sites have, so those handles are typed
+optional (**I12**, [04-codegen.md](04-codegen.md#what-the-shell-contains)).
+Consumer code that reaches through one without checking works perfectly against
+the binding it was developed on and throws at the first site that lacks it. The
+generated types say so; the documentation must say so too, because the failure
+appears only after rollout.
+
+**Repeater handles are not member maps.** A repeater's instances exist only once a
+query has returned, so its handle exposes what is present now rather than a static
+list (**I11**). Consumer code must not assume an instance exists, or persist an
+instance id as though it were an authored one.
+
+**Navigation must be handled, not assumed.** A dashboard with cross-dashboard
+links emits `navigate-request` and does nothing else. A consuming developer who
+ignores the event ships links that appear clickable and do nothing — so the
+generated types make the handler's absence visible, and a dev-mode warning fires
+the first time an unhandled request is emitted.
+
 **SSR.** The consuming application is plausibly Next.js or Nuxt. A module that
 touches `HTMLElement` at import time crashes the server build. Ship a
 client-only entry (`./server` exporting inert stubs, dynamic registration on
@@ -155,9 +187,9 @@ The iframe mode exists for customers who want hard isolation rather than
 integration — a different security posture, not a different feature set. It ships
 the standalone shell plus a narrow `postMessage` protocol:
 
-- **In:** set params, set filters, set theme, refresh, provide token.
+- **In:** set params, set filters, set binding, set theme, refresh, provide token.
 - **Out:** ready, height changed (for auto-resize), widget clicked, filter
-  changed, error.
+  changed, navigate requested, error.
 
 Every message is origin-checked against an allowlist configured per deployment.
 The protocol is versioned like any other public API

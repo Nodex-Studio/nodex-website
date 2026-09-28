@@ -47,6 +47,10 @@ jobs:
           grep -q 'class="ident'   "$f" || { echo "::error::invariant chips missing"; exit 1; }
           test "$(grep -c '<svg' "$f")" -ge 5 || { echo "::error::diagrams missing"; exit 1; }
           ! grep -q 'md</a>'       "$f" || { echo "::error::raw filename link text leaked"; exit 1; }
+          # Every link in a single-page document must be an in-page anchor or external.
+          if grep -oE 'href="[^"#][^"]*"' "$f" | grep -vE 'href="(https?:|mailto:|data:)' | head -5 | grep .; then
+            echo "::error::relative link(s) in a single-page document"; exit 1
+          fi
           ! grep -q '&lt;br'       "$f" || { echo "::error::literal br tags in diagram labels"; exit 1; }
           echo "built $(du -h "$f" | cut -f1), $(grep -c '<svg' "$f") diagrams"
 

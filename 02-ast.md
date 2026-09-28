@@ -25,7 +25,10 @@ the product work:
   structure.
 
 The cost is real and should be stated plainly: a request outside the schema must
-fail honestly rather than improvise. See [Escape hatch](03-studio.md#escape-hatch).
+fail honestly rather than improvise. There is no escape hatch and there will not
+be one — the schema growing is the only valve
+([ADR-0008](adr/0008-no-escape-hatch.md),
+[When the schema falls short](03-studio.md#when-the-schema-falls-short)).
 
 ## Node types
 
@@ -59,12 +62,20 @@ type Filter = {
   appliesTo: NodeId[] | 'all';
 };
 
+// fields every Widget variant also carries
+type WidgetCommon = {
+  optional?: boolean;            // a binding opts in; typed possibly-absent (I12)
+  link?: LinkSpec;               // drill to another dashboard
+};
+
 type Widget =
   | { kind: 'kpi';   id: NodeId; title: string; metric: MetricRef; format: FormatSpec; comparison?: ComparisonSpec }
   | { kind: 'chart'; id: NodeId; title: string; chart: ChartSpec }
   | { kind: 'table'; id: NodeId; title: string; columns: ColumnSpec[]; pageSize: number }
   | { kind: 'text';  id: NodeId; content: string }
-  | { kind: 'custom'; id: NodeId; /* opaque — see escape hatch */ };
+  | { kind: 'map';   id: NodeId; title: string; map: MapSpec }
+  | { kind: 'section';  id: NodeId; title: string; display: 'group' | 'tabs'; layout: Layout }
+  | { kind: 'repeater'; id: NodeId; over: RepeatSpec; layout: Layout };
 
 type ChartSpec = {
   type: 'bar' | 'line' | 'area' | 'donut' | 'scatter' | 'combo';
@@ -74,7 +85,28 @@ type ChartSpec = {
   limit?: number;
   referenceLines?: ReferenceLine[];
 };
+
+type RepeatSpec = {
+  key: DimensionRef;             // must be a stable business key — see below
+  orderBy?: SortSpec;
+  limit: number;                 // hard fan-out bound; default is O9
+  empty: 'hide' | 'placeholder';
+};
+
+type LinkSpec = {
+  to: DashboardRef;              // checked at build; resolution is O13
+  params: { from: FieldRef | ParamRef; to: ParamName }[];
+  open: 'host' | 'self' | 'new'; // 'host' emits navigate-request, never routes itself
+};
 ```
+
+`section` and `repeater` are **containers**: they hold their own `Layout`, so
+grouping and repetition nest without needing a second layout concept. A
+scorecard's four KPI groups are four sections; a tile per plant is one repeater
+over the plant dimension. `MapSpec` is specified in
+[ADR-0011](adr/0011-geo-widget-kinds.md).
+
+There is deliberately no `custom` kind ([ADR-0008](adr/0008-no-escape-hatch.md)).
 
 `ModelFieldRef`, `MetricRef`, and `DimensionRef` resolve against the customer's
 bipp data models. The AST references model entities by name; it does not contain
@@ -108,6 +140,58 @@ deliberate, reviewable API change — see
 [07-versioning.md](07-versioning.md#mechanical-semver).
 
 Deleting a node retires its id permanently. Ids are never reused.
+
+## Instance identity
+
+A repeater's contents exist once in the AST and many times on screen. How many
+times is decided by data — the distinct values of the repeat key — which the AST
+does not know and must not have to be edited to learn. So the rule above cannot
+apply to them, and **I11** governs instead
+([ADR-0009](adr/0009-runtime-repetition.md)).
+
+**Authored identity** is everything described in the previous section: assigned
+once, opaque, retired on delete. The repeater node itself has it. **Instance
+identity** is derived:
+
+```
+w_7f3a91              the repeater      — authored
+w_7f3a91#plant=P-4471 one instance      — derived, enumerated at query time
+```
+
+Four rules make this safe:
+
+- **The key is a stable business key**, declared in the modeling layer. Never an
+  ordinal, an array index, a row number, or a position in the result. If it were
+  positional, onboarding the 131st plant would silently renumber the other 130,
+  which is the [ADR-0006](adr/0006-stable-node-identity.md) failure arriving
+  through a side door and triggered by data rather than by an edit.
+- **Instances are never retired.** A key value missing from today's result may
+  return tomorrow. That is not a deletion, and the id is not burned.
+- **The public API exposes the repeater, never its members** (I4). A repeater is
+  a collection in the generated surface; instance ids appear only in event
+  payloads and drill targets, as `{ repeater, key }`.
+- **A repeater is not a fan-out of queries.** Its children compile to one grouped
+  query with the key as a dimension, partitioned after execution
+  ([06-data-plane.md](06-data-plane.md)).
+
+The cost is honest and worth naming: a consuming developer can handle a click on
+any instance, but cannot write code against one particular instance and be told
+mechanically when it disappears. The alternative is worse — it would make every
+data change an API change.
+
+## What is not AST
+
+**I1** says a dashboard *is* its AST. Three things that a dashboard displays are
+nonetheless not part of it, and putting them there would be a mistake:
+
+| | Lives in | Why not AST |
+|---|---|---|
+| **Bindings** | Data plane registry ([ADR-0010](adr/0010-definition-and-binding.md)) | Adding a site would otherwise be an AST edit, a rebuild, and a version bump for every consumer (I12) |
+| **Repeater instances** | Enumerated at query time | The AST cannot contain what only the data knows (I11) |
+| **Annotations** | Data plane store | They are the customer's commentary, anchored to semantic coordinates rather than to node ids, so they survive a widget being moved or deleted (I14) |
+
+The test is simple: if it changes without anyone authoring anything, it is not
+AST.
 
 ## Patches, not replacements
 
@@ -169,7 +253,9 @@ customer-operated runtimes that upgrade on their own schedule
 customer's runtime.
 
 - Every AST carries `schemaVersion`.
-- Additive changes (new optional property, new widget kind) are minor.
+- Additive changes (new optional property, new widget kind) are minor. New widget
+  kinds are the primary way the platform grows capability, now that there is no
+  escape hatch ([ADR-0008](adr/0008-no-escape-hatch.md)).
 - Removing or re-typing a property is major and requires a migration.
 - Migrations are forward-only, versioned, and applied in the control plane when a
   dashboard is opened. Stored ASTs are upgraded eagerly, never lazily at read
@@ -187,7 +273,13 @@ An AST is validated before it is stored and again before it is built:
    customer's current data models.
 3. **Semantic** — the combination makes sense (a metric on the x-axis of a bar
    chart, a filter targeting a widget that doesn't exist, a layout item with no
-   widget).
+   widget, a repeater whose key is not a declared stable business key, a link
+   whose target dashboard does not accept the params mapped to it).
+
+Referential validation runs against the models a **binding** resolves to, not
+against models in the abstract. A definition is valid only if every binding in
+its set satisfies it — which is what makes "conform your data to this format" a
+checkable contract rather than a convention (O10).
 
 Validation failure from a prompt is a repair loop
 ([03-studio.md](03-studio.md#validation-and-repair)). Validation failure at build

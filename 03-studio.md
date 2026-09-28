@@ -166,27 +166,63 @@ handle both without the interaction model flipping: manual edits apply
 optimistically and instantly; prompt edits show a pending state on the affected
 subtree only, leaving the rest of the dashboard live and interactive.
 
-## Escape hatch
+A dashboard with repeaters or binding-optional widgets cannot be previewed in the
+abstract: the author picks a **binding** to preview as, and Studio says which one
+is selected. Preview also caps repeater fan-out more aggressively than production
+does — an author iterating on a layout does not need 130 copies of it to know
+whether the layout is right.
 
-Some requests will fall outside the schema. The schema should grow to absorb the
-common ones — that is what the failure log is for — but there will always be a
-tail.
+## When the schema falls short
 
-The escape hatch is a **custom widget**: its own query and its own render,
-displayed in Studio as an opaque block that the property panel does not attempt
-to turn into a form. It is explicitly one-way. Once a widget is custom, it is
-not editable by prompt or by panel.
+Some requests will fall outside the schema. **There is no escape hatch**, and
+there will not be one: a custom widget with its own render and its own query
+breaks I2, I3, and the query protocol guarantee that a client can only ask for
+queries the manifest already declares. That last one is not contained to the
+widget — it is the sentence the whole data-plane safety argument rests on. The
+decision and its full reasoning are in
+[ADR-0008](adr/0008-no-escape-hatch.md).
 
-Two properties make this acceptable:
+So a request outside the schema fails honestly, says so, and is logged. Three
+things absorb the tail instead, in the order to reach for them:
 
-- **It is contained.** One widget loses bidirectional editing. The dashboard
-  around it stays fully manipulable. This is the Notion-code-block pattern, and
-  it is very different from letting generated code leak into the whole document.
-- **It is visible.** The user can see exactly which parts of their dashboard have
-  left the managed world, and what that costs them.
+**1. The schema grows.** The prompt-failure log names what is missing and missing
+node types get added. This is the primary channel, and it only works if the log
+has a named owner and a review cadence — without those, "we'll add it" is a
+deflection rather than a plan.
 
-**O3 (OPEN)** — whether this ships in v1. The argument for deferring: shipping an
-escape hatch early teaches users to reach for it instead of reporting the gap,
-and the failure log is far more valuable during the period when the schema is
-still being shaped. The argument against: without it, some evaluations will be
-lost outright over one widget.
+**2. Bounded expressiveness inside the schema.** Computed fields over declared
+metrics, conditional formatting, predicate-banded colour rules, reference lines.
+Declarative, not Turing-complete. Most requests that feel like "we need something
+custom" land here, and this is the cheapest place to satisfy them.
+
+**3. A new widget kind, shipped by Nodex as a schema version.** Additive is a
+minor change ([07-versioning.md](07-versioning.md)) and `minRuntime` already
+handles the resulting skew. This is the honest home for the long tail: a platform
+release, never a per-customer artifact.
+
+The strongest argument for a hatch used to be that flagship dashboards need
+custom visuals. In practice those visuals were maps, hand-built in JavaScript
+because no map node type existed — one missing widget kind, not a need for
+arbitrary code ([ADR-0011](adr/0011-geo-widget-kinds.md)). Expect that shape
+again: what presents as a demand for code is usually a demand for one node type.
+
+What this costs, stated plainly: some evaluations will be lost over a single
+widget, and the only mitigation is schema velocity.
+
+## Authoring a repeater
+
+A repeater is authored like any other node, but it introduces one decision the
+model gets wrong in a new way: **the repeat key**. A prompt like "show this per
+plant" has to resolve to a declared stable business key, not to whatever
+dimension looks plausible, because instance identity is derived from it (I11,
+[02-ast.md](02-ast.md#instance-identity)).
+
+Two consequences for the authoring surface:
+
+- **Cardinality is shown before the first render, not after.** A repeater over an
+  unexpectedly high-cardinality dimension is the new unbounded scan. Studio
+  resolves the distinct count when the key is chosen and refuses a key above the
+  fan-out bound rather than discovering it at query time (O9).
+- **Choosing a non-stable key is a validation failure**, not a warning. It is
+  rejected in the same repair loop as an unknown metric, with the same kind of
+  error: `repeat key "row_number" is not a stable key; available: [...]`.

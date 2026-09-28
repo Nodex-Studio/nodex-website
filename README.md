@@ -13,10 +13,15 @@ Studio is a multi-tenant SaaS control plane. A dashboard authored in Studio is
 represented as an **AST** conforming to a closed schema. Prompts and direct
 manipulation both edit that AST and nothing else. From the AST, a deterministic
 build emits a frontend artifact (custom elements, packaged six ways) and a
-declarative **query manifest**. The manifest is executed by a single versioned
+declarative **query manifest**. One definition can be bound across an estate of
+sites without being copied, and repeated structure expands when the query runs
+rather than when the dashboard is authored. The manifest is executed by a single versioned
 **query runtime** that the customer runs inside their own network, bound to
 their bipp data models and their warehouse. No generated code is ever
-hand-edited, and no artifact ever carries an endpoint or a credential.
+hand-edited, there is no escape hatch, and no artifact ever carries an endpoint or
+a credential. The runtime is also where anything that must happen without a
+browser happens — threshold monitoring and scheduled delivery — and the one thing
+the platform stores is commentary about numbers, never the numbers themselves.
 
 ## Documents
 
@@ -26,20 +31,20 @@ hand-edited, and no artifact ever carries an endpoint or a credential.
 | [00b-platform.md](00b-platform.md) | What bipp already provides, what Nodex Studio adds, and what neither does yet |
 | [01-overview.md](01-overview.md) | Actors, planes, core invariants, glossary |
 | [02-ast.md](02-ast.md) | The AST: schema, node identity, patches, provenance, versioning |
-| [03-studio.md](03-studio.md) | Authoring: prompt pipeline, manual editing, selection, escape hatch |
+| [03-studio.md](03-studio.md) | Authoring: prompt pipeline, manual editing, selection, schema limits |
 | [04-codegen.md](04-codegen.md) | Deterministic shell vs. generated interior; compilation target |
 | [05-distribution.md](05-distribution.md) | The six delivery modes and the consumer-facing package contract |
-| [06-data-plane.md](06-data-plane.md) | Query manifest, query runtime, modeling layer, auth, on-prem |
+| [06-data-plane.md](06-data-plane.md) | Query manifest, bindings, repeater expansion, runtime, monitors, annotations, auth, on-prem |
 | [07-versioning.md](07-versioning.md) | Three release cadences, mechanical semver, compatibility windows |
 | [08-security.md](08-security.md) | Trust boundaries, credentials, embed tokens, tenant isolation |
 
-Decisions are recorded in [adr/](adr/). Diagrams (editable `.excalidraw` plus
-rendered `.svg`) are in [diagrams/](diagrams/).
+Decisions are recorded in [adr/](adr/). Diagrams are in [diagrams/](diagrams/) as
+mermaid sources with rendered `.svg` and `.png`.
 
 ## Conventions
 
 Load-bearing rules are stated once in [01-overview.md](01-overview.md) as
-numbered invariants (**I1**–**I9**) and referenced by number elsewhere. If a
+numbered invariants (**I1**–**I14**) and referenced by number elsewhere. If a
 design in any document appears to violate an invariant, the invariant wins and
 the document is wrong.
 

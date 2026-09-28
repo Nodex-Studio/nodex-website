@@ -47,14 +47,42 @@ declare global {
 export interface SalesDashboardElement extends HTMLElement {
   region: string | null;              // from Dashboard.params
   dateRange: [string, string] | null;
-  readonly widgets: { w_7f3a91: WidgetHandle; w_c14b02: WidgetHandle };
+  binding: string | null;             // which site; see I12
+  readonly widgets: {
+    w_7f3a91: WidgetHandle;
+    w_c14b02: WidgetHandle;
+    w_88ffa1?: WidgetHandle;          // optional in some bindings (I12)
+    w_3b81c7: RepeaterHandle;         // a collection, never its members (I11)
+  };
   addEventListener(t: 'widget-click', l: (e: WidgetClickEvent) => void): void;
   addEventListener(t: 'filter-change', l: (e: FilterChangeEvent) => void): void;
+  addEventListener(t: 'navigate-request', l: (e: NavigateRequestEvent) => void): void;
 }
 ```
 
 Every name in that file traces to a stable AST id or a declared param. None of it
 is a model's choice.
+
+Three of those lines are consequences of data-dependent structure, and each is
+deliberate:
+
+- **`binding`** selects which site's data the element resolves against. It is a
+  property, not a build-time constant, because one artifact serves the whole
+  estate (**I12**, [ADR-0010](adr/0010-definition-and-binding.md)).
+- **`w_88ffa1?`** is optional because some bindings do not have that widget. The
+  generated type says so, so a consuming developer handles absence at compile time
+  rather than at 9am.
+- **`w_3b81c7` is a `RepeaterHandle`, not a map of instances.** Instances are
+  enumerated at query time and cannot appear in a type derived from the AST
+  (**I4**, **I11**). The handle exposes the instances present *now* and carries
+  `{ repeater, key }` in event payloads; it does not pretend to be a static
+  member list.
+
+**`navigate-request` is emitted, never acted on.** A cross-dashboard link inside a
+component embedded in someone else's application must not change the URL itself —
+the host owns routing. The shell emits the request with the target dashboard and
+the mapped params; what happens next is the consuming developer's decision
+([05-distribution.md](05-distribution.md)).
 
 ## Compilation target: custom elements
 
@@ -76,9 +104,11 @@ deliberate, documented surface:
 - **CSS custom properties** are the theme API. They pierce the shadow boundary by
   design, so they are the supported way for a consuming application to make the
   dashboard match its own design system.
-- **`::part()`** is the escape hatch, on a small, explicitly enumerated set of
-  parts. Every exposed part is a compatibility commitment
-  ([07-versioning.md](07-versioning.md)) — expose few, deliberately.
+- **`::part()`** is the release valve for styling that custom properties cannot
+  express, on a small, explicitly enumerated set of parts. Every exposed part is a
+  compatibility commitment ([07-versioning.md](07-versioning.md)) — expose few,
+  deliberately. (This is a *styling* surface only. It is unrelated to the schema
+  escape hatch, which does not exist — [ADR-0008](adr/0008-no-escape-hatch.md).)
 - Everything else is internal and may change on any build.
 
 ```css
@@ -107,10 +137,14 @@ rediscovered per dashboard:
 - **Fonts** — `@font-face` must be declared in the outer document; it does not
   resolve from inside a shadow root.
 
-**O2 (OPEN)** — chart library selection. The binding constraint is correct
-rendering inside a shadow root, which eliminates several otherwise reasonable
-candidates. Canvas-based libraries are generally safer here than SVG libraries
-that measure via `document`. Whatever is chosen must be validated inside a shadow
+**O2 (OPEN)** — chart library selection, and with it the **map** library, since
+`map` is a widget kind ([ADR-0011](adr/0011-geo-widget-kinds.md)) and map
+libraries fail inside a shadow root in the same ways and for the same reasons.
+Decide both together; deciding them apart means validating the same constraint
+twice and possibly shipping two conflicting answers. The governing constraint is
+correct rendering inside a shadow root, which eliminates several otherwise
+reasonable candidates. Canvas-based libraries are generally safer here than SVG
+libraries that measure via `document`. Whatever is chosen must be validated inside a shadow
 root, inside an iframe, and inside a host app with an aggressive global
 stylesheet before it is committed to — this choice is extremely expensive to
 reverse once artifacts are in the wild.
@@ -143,6 +177,7 @@ AST (validated, versioned)
  │     └─ render logic against the reactive runtime
  │
  ├─▶ manifest generator (deterministic) ──▶ query manifest  [06]
+ │     └─ a template: bindings and repeat keys resolve in the runtime, not here
  │
  └─▶ bundler
        ├─ core ESM bundle (shared runtime externalised)
